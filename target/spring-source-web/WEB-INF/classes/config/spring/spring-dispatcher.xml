@@ -1,0 +1,365 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:task="http://www.springframework.org/schema/task"
+	   xmlns:aop="http://www.springframework.org/schema/aop"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	   xmlns:tx="http://www.springframework.org/schema/tx"
+	   xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+	   xsi:schemaLocation="
+	http://www.springframework.org/schema/util
+	http://www.springframework.org/schema/util/spring-util-3.2.xsd
+	http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.2.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+	http://www.springframework.org/schema/jdbc
+	http://www.springframework.org/schema/jdbc/spring-jdbc-3.2.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+	http://www.springframework.org/schema/data/jpa
+	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+	http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<!-- 加载数据库配置文件
+		<bean
+			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+			<property name="ignoreUnresolvablePlaceholders" value="true" />
+			<property name="locations">
+				<list>
+					<value>classpath:config.properties</value>
+				</list>
+			</property>
+		</bean>  -->
+	<mvc:annotation-driven/>
+	<context:component-scan base-package="com.zhuguang.jack"/>
+
+	<context:property-placeholder location="classpath:config/core/core.properties" />
+
+	<!-- 解决springMVC响应数据乱码   text/plain就是响应的时候原样返回数据
+		<mvc:annotation-driven>
+			<mvc:message-converters register-defaults="true">
+				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+				</bean>
+			</mvc:message-converters>
+		</mvc:annotation-driven>-->
+	<!--<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
+			<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+		</bean>-->
+	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="student" class="com.zhuguang.jack.testbean.Student" >
+		<description></description>
+		<meta key="key" value="value"></meta>
+		<lookup-method name="getCar" bean="hongqi"></lookup-method>
+		<property name="list[0]" value="1"></property>
+		<property name="list[1]" value="2"></property>
+		<property name="list[2]" value="3"></property>
+
+		<property name="mylist">
+			<list>
+				<value>a</value>
+				<value>b</value>
+				<value>c</value>
+			</list>
+		</property>
+
+		<property name="param" value="1234"></property>
+		<property name="map">
+			<map>
+				<entry key="key1" value="value1"></entry>
+				<entry key="key2" value="value2"></entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean id="service" class="com.zhuguang.jack.testbean.TestServiceImpl">
+	</bean>
+
+	<!-- 开启controller注解支持 -->
+	<!-- 注：如果base-package=com.avicit 则注解事务不起作用 TODO 读源码
+		<context:component-scan base-package="com.zhuguang">
+			<context:include-filter type="annotation"
+				expression="org.springframework.stereotype.Controller" />
+			<context:exclude-filter type="annotation"
+				expression="org.springframework.stereotype.Service" />
+		</context:component-scan>-->
+
+	<mvc:resources mapping="/**" location="/index" />
+	<!--
+		<mvc:interceptors>
+
+			<mvc:interceptor>
+				<mvc:mapping path="/**" />
+				<bean
+					class="com.soshare.source.interceptor.dispatcher.AuthInterceptor"></bean>
+			</mvc:interceptor>
+
+			<mvc:interceptor>
+				<mvc:mapping path="/*" />
+				<bean
+					class="com.soshare.source.interceptor.dispatcher.HandlerDispatcherContextInterceptor"></bean>
+			</mvc:interceptor>
+			<mvc:interceptor>
+				<mvc:mapping path="/*" />
+				<bean
+					class="com.soshare.source.interceptor.pagination.HandlerPaginationInterceptor"></bean>
+			</mvc:interceptor>
+
+		</mvc:interceptors> -->
+	<!-- 配置视图解析 -->
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/WEB-INF/jsp/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+
+	<!--<mvc:view-controller path="/" view-name="redirect:/index" />-->
+
+	<bean
+			class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+
+	<bean id="handlerAdapter"
+		  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<ref bean="mappingJacksonHttpMessageConverter" /><!-- json转换器 -->
+				<!--<ref bean="stringHttpMessageConverter"/>-->
+			</list>
+		</property>
+	</bean>
+
+	<!---->
+		<bean
+			class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+			<property name="mediaTypes">
+				<map>
+					<entry key="json" value="application/json" />
+					<entry key="xml" value="application/xml" />
+					<entry key="html" value="text/html" />
+				</map>
+			</property>
+			<property name="viewResolvers">
+				<list>
+					<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+					<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+						<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+						<property name="prefix" value="/" />
+						<property name="suffix" value=".jsp" />
+					</bean>
+				</list>
+			</property>
+		</bean>
+	<!-- 支持上传文件 -->
+
+	<!-- 控制器异常处理 -->
+	<bean id="exceptionResolver"
+		  class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.lang.Exception">
+					error
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="propertyConfigurer"  class="com.zhuguang.jack.springconfig.LoadProperties">
+		<property name="locations">
+			<value>classpath*:config/core/config.properties</value>
+		</property>
+	</bean>
+
+
+	<!--<bean id="myservice" class="com.zhuguang.jack.service.MyServiceImpl"></bean>
+	<bean id="myaspectj" class="com.zhuguang.jack.aop.AopAspectj"></bean>
+	<bean id="myintroduction" class="com.zhuguang.jack.aop.IntroductionClass"></bean>
+
+	<bean id="myInterceptor" class="com.zhuguang.jack.interceptor.MyInterceptor"></bean>
+
+	<bean id="anno" class="com.zhuguang.jack.annotationaop.MyInterceptor"></bean>-->
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="user">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="minPoolSize" value="10" />
+		<property name="maxPoolSize" value="100" />
+		<property name="maxIdleTime" value="1800" />
+		<property name="acquireIncrement" value="3" />
+		<property name="maxStatements" value="1000" />
+		<property name="initialPoolSize" value="10" />
+		<property name="idleConnectionTestPeriod" value="60" />
+		<property name="acquireRetryAttempts" value="30" />
+		<property name="breakAfterAcquireFailure" value="false" />
+		<property name="testConnectionOnCheckout" value="false" />
+		<property name="acquireRetryDelay">
+			<value>100</value>
+		</property>
+	</bean>
+
+<!--	<bean id="oracle" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+		<property name="driverClass">
+			<value>${jdbc.driverClassName}</value>
+		</property>
+		<property name="jdbcUrl">
+			<value>${jdbc.url}</value>
+		</property>
+		<property name="user">
+			<value>${jdbc.username}</value>
+		</property>
+		<property name="password">
+			<value>${jdbc.password}</value>
+		</property>
+		<property name="minPoolSize" value="10" />
+		<property name="maxPoolSize" value="100" />
+		<property name="maxIdleTime" value="1800" />
+		<property name="acquireIncrement" value="3" />
+		<property name="maxStatements" value="1000" />
+		<property name="initialPoolSize" value="10" />
+		<property name="idleConnectionTestPeriod" value="60" />
+		<property name="acquireRetryAttempts" value="30" />
+		<property name="breakAfterAcquireFailure" value="false" />
+		<property name="testConnectionOnCheckout" value="false" />
+		<property name="acquireRetryDelay">
+			<value>100</value>
+		</property>
+	</bean>-->
+	<!--
+		<bean id="oracle" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+			<property name="driverClassName"     value="${ora_driver}"/>
+			<property name="url"         value="${ora_url}"/>
+			<property name="username"    value="${ora_username}"/>
+			<property name="password"    value="${ora_password}"/>
+		</bean>
+
+	<bean id="vendorProperties"
+		  class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="Oracle">oracle</prop>
+				<prop key="MySQL">mysql</prop>
+			</props>
+		</property>
+	</bean>-->
+
+	<!-- mybatis多产商数据库支持
+	<bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
+		<property name="properties" ref="vendorProperties" />
+	</bean>-->
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mapperLocations">
+			<value>classpath*:com/zhuguang/jack/xml/*Mapper.xml</value>
+		</property>
+		<!--<property name="databaseIdProvider" ref="databaseIdProvider" />-->
+		<!--<property name="plugins">
+				<array>
+					<bean class="com.zhuguang.jack.mybatisInterceptor.ExectorInterceptor"></bean>
+					<bean class="com.zhuguang.jack.mybatisInterceptor.PageInterceptor"></bean>
+					<bean class="com.zhuguang.jack.mybatisInterceptor.ResultSetCacheInterceptor"></bean>
+				</array>
+			</property>
+		<property name="plugins">
+			<array>
+				<bean class="com.zhuguang.jack.mybatisInterceptor.MyPubResultSetHandler"></bean>
+				<bean class="com.zhuguang.jack.mybatisInterceptor.CacheExecutorPlugin"></bean>
+			</array>
+		</property>-->
+	</bean>
+
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="annotationClass" value="org.springframework.stereotype.Repository"/>
+		<property name="basePackage" value="com.zhuguang.jack.dao"/>
+
+		<!--这样会导致property-placeholder加载配置文件失效
+			<property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
+
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+	</bean>
+
+
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<!--<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
+			<tx:attributes>
+				<tx:method name="save*" propagation="REQUIRED" read-only="false"
+					rollback-for="java.lang.RuntimeException" />
+				<tx:method name="delete*" propagation="REQUIRED" read-only="false"
+					rollback-for="java.lang.RuntimeException" />
+				<tx:method name="update*" propagation="REQUIRED" read-only="false"
+					rollback-for="java.lang.RuntimeException" />
+				<tx:method name="check*" propagation="REQUIRED" read-only="false"
+					rollback-for="java.lang.RuntimeException" />
+				<tx:method name="print*" propagation="REQUIRED" read-only="false"
+					rollback-for="java.lang.RuntimeException" />
+				<tx:method name="*" propagation="REQUIRED" read-only="false" isolation="READ_COMMITTED"
+					rollback-for="java.lang.RuntimeException" />
+			</tx:attributes>
+		</tx:advice>
+		<aop:config>
+			<aop:pointcut id="pc"
+				expression="execution(public * com.zhuguang.jack.service..*.*(..))" />
+			<aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice" />
+		</aop:config>-->
+	<!--<aop:aspectj-autoproxy/>-->
+	<!--
+<aop:pointcut>：用来定义切入点，该切入点可以重用；
+				 <aop:advisor>：用来定义只有一个通知和一个切入点的切面；
+				 <aop:aspect>：用来定义切面，该切面可以包含多个切入点和通知，而且标签内部的通知和切入点定义是无序的；和advisor的区别就在此，advisor只包含一个通知和一个切入点。
+				 <aop:before method="before" pointcut-ref="myMethods"/>
+<aop:after-returning method="afterReturning" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+<aop:after method="after" pointcut-ref="myMethod2"/>
+<aop:after-throwing method="afterthrowing" pointcut-ref="myMethods"/>
+<aop:around method="around" pointcut-ref="myMethod2"/>
+
+			<aop:config proxy-target-class="true">
+				<aop:pointcut >在此处定义的pointcut是全局的pointcut可以供所有的aspect使用
+					 id:表示这个pointcut的名称，以方便使用
+				<aop:pointcut id="myMethods"
+					expression="execution(public * com.zhuguang.jack.service..*.*(..))" />
+				<aop:aspect id="txAspect" ref="myaspectj">
+
+					<aop:declare-parents types-matching="com.zhuguang.jack.service.MyServiceImpl"
+						implement-interface="com.zhuguang.jack.aop.IntroductionIntf"
+						delegate-ref="myintroduction"/>
+						 id:表示这个pointcut的名称，以方便使用
+					<aop:pointcut id="myMethod2"
+						expression="execution(public * com.zhuguang.jack.service..*.*(..))" />
+					<aop:before method="before" pointcut-ref="myMethods"/>
+				</aop:aspect>
+			</aop:config>
+		<aop:aspectj-autoproxy proxy-target-class="true"/>-->
+	<aop:aspectj-autoproxy/>
+</beans>
+	
+	
+	
+

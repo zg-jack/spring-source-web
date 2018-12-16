@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.zhuguangedu.com/schema/mytags"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.zhuguangedu.com/schema/mytags"
+ elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--<xsd:element name="mongo">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:string"></xsd:attribute>
+			<xsd:attribute name="ip" type="xsd:string"></xsd:attribute>
+			<xsd:attribute name="port" type="xsd:string"></xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>-->
+	<xsd:element name="redis">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:string"></xsd:attribute>
+			<xsd:attribute name="ip" type="xsd:string"></xsd:attribute>
+			<xsd:attribute name="port" type="xsd:string"></xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,1 @@
+org.springframework.context.ApplicationContextInitializer=com.zhuguang.jack.applicationContextInitializer.MyApplicationContextInitializer

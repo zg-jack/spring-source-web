@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:jack="http://www.zhuguangedu.com/schema/mytags"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.zhuguangedu.com/schema/mytags http://www.zhuguangedu.com/schema/mytags.xsd"
+       default-lazy-init="true">
+ 	<jack:redis id="redis" ip="127.0.0.1" port="6379"></jack:redis>
+</beans>  
