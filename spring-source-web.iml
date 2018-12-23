@@ -19,6 +19,9 @@
         </webroots>
       </configuration>
     </facet>
+    <facet type="AspectJ" name="AspectJ">
+      <configuration />
+    </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
     <output url="file://$MODULE_DIR$/target/classes" />

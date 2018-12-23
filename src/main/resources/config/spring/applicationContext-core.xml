@@ -22,7 +22,8 @@
     <context:annotation-config />
 
     <bean id="man" class="com.zhuguang.jack.testbean.Man" name="man2,man3,man4,man5">
-        <meta key="key" value="value"></meta>
+        <!--这个标签只会作用在beanDifition.getAttribute(key)-->
+        <meta key="key" value="value-man"></meta>
     </bean>
     <bean id="woman" class="com.zhuguang.jack.testbean.Woman"></bean>
     <bean id="people" class="com.zhuguang.jack.testbean.ShowSixClass">
@@ -34,5 +35,95 @@
     <bean id="originClass" class="com.zhuguang.jack.testbean.OriginClass">
         <replaced-method name="method" replacer="replaceClass"></replaced-method>
     </bean>
+
+    <bean id="testbean" class="com.zhuguang.jack.testbean.TestBean">
+        <!--<property name="people" ref="man">
+            <value>xxxx</value>
+            <list>
+                <value>1</value>
+                <value>2</value>
+                <value>3</value>
+            </list>
+        </property>-->
+    </bean>
+
+    <bean class="com.zhuguang.jack.beanDefinitionRegistryPostProcessor.MyBeanDefinitionRegistryPostProcessor"></bean>
+    <bean class="com.zhuguang.jack.beanDefinitionRegistryPostProcessor.MyBeanFactoryPostProcessor"></bean>
+
+    <bean class="com.zhuguang.jack.typeConverter.StringToDateConverter"></bean>
+    <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
+        <property name="converters">
+            <list>
+                <!-- 自定义转换器 -->
+                <bean  class="com.zhuguang.jack.typeConverter.StringToDateConverter" >
+                    <property name="datePattern" value="yyyy-MM-dd"></property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!--<bean class="com.zhuguang.jack.aware.TargetClass"></bean>-->
+    <!--<context:load-time-weaver aspectj-weaving="autodetect"/>-->
+    <!--自定义，这个是类加载的时织入切面
+    <context:load-time-weaver></context:load-time-weaver>-->
+
+    <!--<beans profile="product">
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="driverClass">
+                <value>${jdbc.driverClassName}</value>
+            </property>
+            <property name="jdbcUrl">
+                <value>${jdbc.url}</value>
+            </property>
+            <property name="user">
+                <value>${jdbc.username}</value>
+            </property>
+            <property name="password">
+                <value>${jdbc.password}</value>
+            </property>
+            <property name="minPoolSize" value="10" />
+            <property name="maxPoolSize" value="100" />
+            <property name="maxIdleTime" value="1800" />
+            <property name="acquireIncrement" value="3" />
+            <property name="maxStatements" value="1000" />
+            <property name="initialPoolSize" value="10" />
+            <property name="idleConnectionTestPeriod" value="60" />
+            <property name="acquireRetryAttempts" value="30" />
+            <property name="breakAfterAcquireFailure" value="false" />
+            <property name="testConnectionOnCheckout" value="false" />
+            <property name="acquireRetryDelay">
+                <value>100</value>
+            </property>
+        </bean>
+    </beans>
+    <beans profile="test">
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="driverClass">
+                <value>${jdbc.driverClassName}</value>
+            </property>
+            <property name="jdbcUrl">
+                <value>${jdbc.url}</value>
+            </property>
+            <property name="user">
+                <value>${jdbc.username}</value>
+            </property>
+            <property name="password">
+                <value>${jdbc.password}</value>
+            </property>
+            <property name="minPoolSize" value="10" />
+            <property name="maxPoolSize" value="100" />
+            <property name="maxIdleTime" value="1800" />
+            <property name="acquireIncrement" value="3" />
+            <property name="maxStatements" value="1000" />
+            <property name="initialPoolSize" value="10" />
+            <property name="idleConnectionTestPeriod" value="60" />
+            <property name="acquireRetryAttempts" value="30" />
+            <property name="breakAfterAcquireFailure" value="false" />
+            <property name="testConnectionOnCheckout" value="false" />
+            <property name="acquireRetryDelay">
+                <value>100</value>
+            </property>
+        </bean>
+    </beans>-->
 
 </beans>

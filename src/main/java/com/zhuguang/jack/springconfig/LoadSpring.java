@@ -11,6 +11,7 @@ public class LoadSpring {
     public static void main(String[] args) throws IOException {
         ClassPathXmlApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("classpath*:config/spring/applicationContext-core.xml");
 
+
         ShowSixClass ss = (ShowSixClass)classPathXmlApplicationContext.getBean("people");
         System.out.println(classPathXmlApplicationContext);
 
@@ -19,6 +20,9 @@ public class LoadSpring {
 
         Man man = (Man)classPathXmlApplicationContext.getBean("man");
         man.showsix();
+
+//        classPathXmlApplicationContext.getEnvironment().setActiveProfiles("product");
+
         System.in.read();
     }
 }
