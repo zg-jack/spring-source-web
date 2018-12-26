@@ -20,5 +20,7 @@ public class RedisBeanDifinitionParser extends
         builder.addConstructorArgValue(ip);
         builder.addConstructorArgValue(Integer.parseInt(port));
     }
+
+
     
 }

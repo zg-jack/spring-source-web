@@ -1,0 +1,9 @@
+<!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <weaver options="-verbose -showWeaveInfo">
+        <include within="com.zhuguang.jack.aware.*"/>
+    </weaver>
+    <aspects>
+        <aspect name="com.zhuguang.jack.aware.ProfilingAspect"/>
+    </aspects>
+</aspectj>

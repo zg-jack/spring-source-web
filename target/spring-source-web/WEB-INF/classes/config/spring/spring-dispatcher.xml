@@ -28,6 +28,7 @@
 	http://www.springframework.org/schema/task
 	http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
+	<!--<import resource="spring-dispatcher.xml"></import>-->
 	<!-- 加载数据库配置文件
 		<bean
 			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
