@@ -293,7 +293,7 @@
 	ISPASS,
 		</if>
 		<if test="docautograph != null and docautograph != ''">
-	DOCAUTOGRAPH,
+	DOCAUTOGRAPH, 
 		</if>
 	FINGERPRINT,REMARK,PRINT_FLAG)
 		values (#{psptId,jdbcType=VARCHAR},str_to_date(#{activeTime,jdbcType=VARCHAR},'%Y-%m-%d %T'),#{autograph,jdbcType=VARCHAR},
