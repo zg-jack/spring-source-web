@@ -67,8 +67,8 @@
 	<bean id="student" class="com.zhuguang.jack.testbean.Student" >
 		<description></description>
 		<meta key="key" value="value"></meta>
-		<lookup-method name="getCar" bean="hongqi"></lookup-method>
-		<property name="list[0]" value="1"></property>
+<!-- 		<lookup-method name="getCar" bean="hongqi"></lookup-method>
+ -->		<property name="list[0]" value="1"></property>
 		<property name="list[1]" value="2"></property>
 		<property name="list[2]" value="3"></property>
 
