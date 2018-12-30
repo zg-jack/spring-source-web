@@ -1,12 +1,12 @@
 package com.zhuguang.jack.bean;
 
-public class ConsultConfigArea {
+    public class ConsultConfigArea {
     
     public String areaCode;
     
     public String areaName;
     
-    public Integer state;
+    public String state;
     
     public String getAreaCode() {
         return areaCode;
@@ -24,11 +24,11 @@ public class ConsultConfigArea {
         this.areaName = areaName;
     }
     
-    public Integer getState() {
+    public String getState() {
         return state;
     }
     
-    public void setState(Integer state) {
+    public void setState(String state) {
         this.state = state;
     }
 }

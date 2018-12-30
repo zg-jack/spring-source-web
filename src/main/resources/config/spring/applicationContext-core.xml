@@ -21,11 +21,14 @@
 
     <context:annotation-config />
 
-    <bean id="man" class="com.zhuguang.jack.testbean.Man" name="man2,man3,man4,man5">
+    <bean id="man" class="com.zhuguang.jack.testbean.Man" name="man2,man3,man4,man5" lazy-init="false">
         <!--这个标签只会作用在beanDifition.getAttribute(key)-->
         <meta key="key" value="value-man"></meta>
     </bean>
-    <bean id="woman" class="com.zhuguang.jack.testbean.Woman"></bean>
+
+    <bean id="factoryBeanTest" class="com.zhuguang.jack.factoryBean.FactoryBeanTest"></bean>
+
+    <bean id="woman" class="com.zhuguang.jack.testbean.Woman" lazy-init="false" factory-bean="factoryBeanTest" factory-method="getObject"></bean>
     <bean id="people" class="com.zhuguang.jack.testbean.ShowSixClass">
         <lookup-method name="getPeople" bean="woman"></lookup-method>
     </bean>
@@ -126,4 +129,39 @@
         </bean>
     </beans>-->
 
+    <!--当希望一个bean只被某一个类使用时，我们可以使用内部bean。内部bean此时作为某一个类的属性，只能通过该类实例化。-->
+    <bean class="com.zhuguang.jack.testbean.OutClass">
+        <property name="username" value="jack"/>
+        <property name="age" value="18"/>
+        <property name="innerClass">
+            <!--这个就是内部bean，定义在了property属性里面，内部bean只能本外部的bean实例化-->
+            <bean class="com.zhuguang.jack.testbean.InnerClass">
+                <property name="age" value="19"/>
+                <property name="username" value="roy"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--父子bean
+    子bean必须与父bean保持兼容，也就是说子bean中必须有父bean定义的所有属性
+父bean必须是抽象bean或者定义lazy-init=true也就是不让bean工厂实例化该bean ‘
+abstract="true" Spring不会实例化该bean
+其实就是一个配置的继承
+    -->
+    <bean id="parent" class="com.zhuguang.jack.testbean.Parent" abstract="true">
+        <property name="username" value="parent name"/>
+    </bean>
+    <bean id="son" class="com.zhuguang.jack.testbean.Son" parent="parent">
+        <property name="username" value="son name"/>
+        <property name="age" value="18"/>
+    </bean>
+
+    <bean class="com.zhuguang.jack.SmartFactoryBeanTest" id="smartFactoryBeanTest" lazy-init="false"></bean>
+
+    <bean id="a" class="com.zhuguang.jack.testbean.A" lazy-init="false">
+        <property name="b" ref="b"></property>
+    </bean>
+    <bean id="b" class="com.zhuguang.jack.testbean.B" lazy-init="false">
+        <property name="a" ref="a"></property>
+    </bean>
 </beans>

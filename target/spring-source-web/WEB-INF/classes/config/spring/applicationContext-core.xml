@@ -64,4 +64,92 @@
 
     <!--<bean class="com.zhuguang.jack.aware.TargetClass"></bean>-->
     <!--<context:load-time-weaver aspectj-weaving="autodetect"/>-->
+    <!--自定义，这个是类加载的时织入切面
+    <context:load-time-weaver></context:load-time-weaver>-->
+
+    <!--<beans profile="product">
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="driverClass">
+                <value>${jdbc.driverClassName}</value>
+            </property>
+            <property name="jdbcUrl">
+                <value>${jdbc.url}</value>
+            </property>
+            <property name="user">
+                <value>${jdbc.username}</value>
+            </property>
+            <property name="password">
+                <value>${jdbc.password}</value>
+            </property>
+            <property name="minPoolSize" value="10" />
+            <property name="maxPoolSize" value="100" />
+            <property name="maxIdleTime" value="1800" />
+            <property name="acquireIncrement" value="3" />
+            <property name="maxStatements" value="1000" />
+            <property name="initialPoolSize" value="10" />
+            <property name="idleConnectionTestPeriod" value="60" />
+            <property name="acquireRetryAttempts" value="30" />
+            <property name="breakAfterAcquireFailure" value="false" />
+            <property name="testConnectionOnCheckout" value="false" />
+            <property name="acquireRetryDelay">
+                <value>100</value>
+            </property>
+        </bean>
+    </beans>
+    <beans profile="test">
+        <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+            <property name="driverClass">
+                <value>${jdbc.driverClassName}</value>
+            </property>
+            <property name="jdbcUrl">
+                <value>${jdbc.url}</value>
+            </property>
+            <property name="user">
+                <value>${jdbc.username}</value>
+            </property>
+            <property name="password">
+                <value>${jdbc.password}</value>
+            </property>
+            <property name="minPoolSize" value="10" />
+            <property name="maxPoolSize" value="100" />
+            <property name="maxIdleTime" value="1800" />
+            <property name="acquireIncrement" value="3" />
+            <property name="maxStatements" value="1000" />
+            <property name="initialPoolSize" value="10" />
+            <property name="idleConnectionTestPeriod" value="60" />
+            <property name="acquireRetryAttempts" value="30" />
+            <property name="breakAfterAcquireFailure" value="false" />
+            <property name="testConnectionOnCheckout" value="false" />
+            <property name="acquireRetryDelay">
+                <value>100</value>
+            </property>
+        </bean>
+    </beans>-->
+
+    <!--当希望一个bean只被某一个类使用时，我们可以使用内部bean。内部bean此时作为某一个类的属性，只能通过该类实例化。-->
+    <bean class="com.zhuguang.jack.testbean.OutClass">
+        <property name="username" value="jack"/>
+        <property name="age" value="18"/>
+        <property name="innerClass">
+            <!--这个就是内部bean，定义在了property属性里面，内部bean只能本外部的bean实例化-->
+            <bean class="com.zhuguang.jack.testbean.InnerClass">
+                <property name="age" value="19"/>
+                <property name="username" value="roy"/>
+            </bean>
+        </property>
+    </bean>
+
+    <!--父子bean
+    子bean必须与父bean保持兼容，也就是说子bean中必须有父bean定义的所有属性
+父bean必须是抽象bean或者定义lazy-init=true也就是不让bean工厂实例化该bean ‘
+abstract="true" Spring不会实例化该bean
+其实就是一个配置的继承
+    -->
+    <bean id="parent" class="com.zhuguang.jack.testbean.Parent" abstract="true" lazy-init="true">
+        <property name="username" value="parent name"/>
+    </bean>
+    <bean id="son" class="com.zhuguang.jack.testbean.Son" parent="parent">
+        <!--<property name="username" value="son name"/>-->
+        <property name="age" value="18"/>
+    </bean>
 </beans>
