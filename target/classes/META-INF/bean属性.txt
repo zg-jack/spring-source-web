@@ -45,3 +45,5 @@
 （13）、factory-method：定义创建该Bean对象的工厂方法。它用于下面的“factory-bean”，表示这个Bean是通过工厂方法创建。此时，“class”属性失效。
 
 （14）、factory-bean:定义创建该Bean对象的工厂类。如果使用了“factory-bean”则“class”属性失效。
+
+（15）、autowire-candidate：采用xml格式配置bean时，将<bean/>元素的autowire-candidate属性设置为false，这样容器在查找自动装配对象时，将不考虑该bean，即它不会被考虑作为其它bean自动装配的候选者，但是该bean本身还是可以使用自动装配来注入其它bean的。

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" 
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
@@ -17,49 +17,61 @@
 
     <description>Spring公共配置</description>
 
-    <context:component-scan base-package="com.zhuguang"/>
+    <context:component-scan base-package="com.zhuguang.jack" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <!--<context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>-->
+    </context:component-scan>
 
-    <context:annotation-config />
-
-    <bean id="man" class="com.zhuguang.jack.testbean.Man" name="man2,man3,man4,man5" lazy-init="false">
+    <bean id="man" class="com.zhuguang.jack.testbean.Man" name="man2,man3,man4,man5" lazy-init="false" autowire-candidate="false">
         <!--这个标签只会作用在beanDifition.getAttribute(key)-->
         <meta key="key" value="value-man"></meta>
     </bean>
 
-    <bean id="factoryBeanTest" class="com.zhuguang.jack.factoryBean.FactoryBeanTest"></bean>
+    <bean id="factoryBeanTest" class="com.zhuguang.jack.factoryBean.FactoryBeanTest">
+        <!--<property name="woman" ref="woman"></property>-->
+    </bean>
 
-    <bean id="woman" class="com.zhuguang.jack.testbean.Woman" lazy-init="false" factory-bean="factoryBeanTest" factory-method="getObject"></bean>
+    <bean class="com.zhuguang.jack.scope.ScopeTest" id="scopeTest" scope="request">
+        <!-- 通知Spring容器去代理这个bean -->
+        <!--scope为request的bean，在每个请求到来时，会创建一个实际对象与当前的请求 对应。而使用A的代理对象时，会通过某种方式获得当前的请求，再根据当前这个请求，获得对应A的实际对象。使用代理对象间接操控的就是与当前请求对应的A的实际对象。-->
+        <aop:scoped-proxy/>
+        <property name="username" value="Jack"/>
+    </bean>
+
+    <!--<bean id="woman" class="com.zhuguang.jack.testbean.Woman" lazy-init="false" factory-bean="factoryBeanTest" factory-method="getObject"></bean>-->
+    <bean id="woman" class="com.zhuguang.jack.testbean.Woman" lazy-init="false"></bean>
     <bean id="people" class="com.zhuguang.jack.testbean.ShowSixClass">
         <lookup-method name="getPeople" bean="woman"></lookup-method>
     </bean>
 
-    <bean id="replaceClass" class="com.zhuguang.jack.testbean.ReplaceClass"/>
+    <bean id="replaceClass" class="com.zhuguang.jack.testbean.ReplaceClass" lazy-init="false
+"/>
 
     <bean id="originClass" class="com.zhuguang.jack.testbean.OriginClass">
         <replaced-method name="method" replacer="replaceClass"></replaced-method>
     </bean>
 
     <bean id="testbean" class="com.zhuguang.jack.testbean.TestBean">
-        <!--<property name="people" ref="man">
-            <value>xxxx</value>
-            <list>
-                <value>1</value>
-                <value>2</value>
-                <value>3</value>
-            </list>
-        </property>-->
     </bean>
 
     <bean class="com.zhuguang.jack.beanDefinitionRegistryPostProcessor.MyBeanDefinitionRegistryPostProcessor"></bean>
     <bean class="com.zhuguang.jack.beanDefinitionRegistryPostProcessor.MyBeanFactoryPostProcessor"></bean>
 
     <bean class="com.zhuguang.jack.typeConverter.StringToDateConverter"></bean>
+
+    <bean id="typeClass" class="com.zhuguang.jack.typeConverter.TypeClass" lazy-init="false">
+        <property name="date" value="2018-12-12"></property>
+        <property name="consultRecord" value="dlajfladsjfieiewir"></property>
+    </bean>
     <bean id="conversionService" class="org.springframework.context.support.ConversionServiceFactoryBean">
         <property name="converters">
             <list>
                 <!-- 自定义转换器 -->
-                <bean  class="com.zhuguang.jack.typeConverter.StringToDateConverter" >
+                <bean class="com.zhuguang.jack.typeConverter.StringToDateConverter">
                     <property name="datePattern" value="yyyy-MM-dd"></property>
+                </bean>
+                <bean class="com.zhuguang.jack.typeConverter.StringToObjectConverter">
                 </bean>
             </list>
         </property>
@@ -158,10 +170,94 @@ abstract="true" Spring不会实例化该bean
 
     <bean class="com.zhuguang.jack.SmartFactoryBeanTest" id="smartFactoryBeanTest" lazy-init="false"></bean>
 
-    <bean id="a" class="com.zhuguang.jack.testbean.A" lazy-init="false">
+    <bean id="a" class="com.zhuguang.jack.testbean.A" init-method="initMethod" lazy-init="false" autowire="byType">
         <property name="b" ref="b"></property>
+        <property name="username" value="jack"></property>
+        <!--<constructor-arg name="b" ref="b"></constructor-arg>-->
     </bean>
-    <bean id="b" class="com.zhuguang.jack.testbean.B" lazy-init="false">
+    <bean id="b" class="com.zhuguang.jack.testbean.B" lazy-init="false" autowire="byType">
         <property name="a" ref="a"></property>
+        <!--<constructor-arg name="a" ref="a"></constructor-arg>-->
     </bean>
+
+    <bean class="com.zhuguang.jack.testbean.ListInjectTest" id="injectTest">
+        <property name="list[0]" value="jack"></property>
+        <property name="list[1]" value="roy"></property>
+
+        <property name="map[key1]" value="jack"></property>
+        <property name="map[key2]" value="jack2"></property>
+    </bean>
+
+    <bean class="com.zhuguang.jack.prototype.PrototypeTestA" id="prototypeTestA" scope="prototype">
+        <property name="prototypeTestB" ref="prototypeTestB"/>
+    </bean>
+    <bean class="com.zhuguang.jack.prototype.PrototypeTestB" id="prototypeTestB" >
+        <property name="prototypeTestA" ref="prototypeTestA"/>
+    </bean>
+
+    <!--<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="propertyEditorRegistrars">
+            <list>
+                <bean class="com.zhuguang.jack.typeConverter.MyPropertyEditorRegistrar1"/>
+            </list>
+        </property>
+    </bean>-->
+
+    <!--
+                 <aop:pointcut>：用来定义切入点，该切入点可以重用；
+				 <aop:advisor>：用来定义只有一个通知和一个切入点的切面；
+				 <aop:aspect>：用来定义切面，该切面可以包含多个切入点和通知，而且标签内部的通知和切入点定义是无序的；和advisor的区别就在此，advisor只包含一个通知和一个切入点。
+				 <aop:before method="before" pointcut-ref="myMethods"/>
+    <aop:after-returning method="afterReturning" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+    <aop:after method="after" pointcut-ref="myMethod2"/>
+    <aop:after-throwing method="afterthrowing" pointcut-ref="myMethods"/>
+    <aop:around method="around" pointcut-ref="myMethod2"/>-->
+    <!--proxy-target-class="true" cglib proxy-target-class="false"或者默认省略 jdk-->
+    <bean class="com.zhuguang.jack.aop.aspect.AspectXml1" id="aspectXml1"/>
+    <bean class="com.zhuguang.jack.aop.aspect.AspectXml2" id="aspectXml2"/>
+
+    <bean class="com.zhuguang.jack.aop.advisorAdvice" id="advisorAdvice"/>
+
+    <aop:config proxy-target-class="true">
+        <!--<aop:pointcut>在此处定义的pointcut是全局的pointcut可以供所有的aspect使用-->
+        <!--id:表示这个pointcut的名称，以方便使用-->
+        <aop:pointcut id="addpointcut"
+                      expression="execution(public * com.zhuguang.jack.service..*.add(..))"/>
+        <aop:pointcut id="delpointcut"
+                      expression="execution(public * com.zhuguang.jack.service..*.del*(..))"/>
+        <aop:pointcut id="myMethods"
+                      expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+        <!--advisor必须在aspect之前，要不然有xml约束报错-->
+        <aop:advisor advice-ref="advisorAdvice" order="2" pointcut-ref="myMethods"/>
+        <aop:aspect id="aspect1" ref="aspectXml1" order="0">
+            <!--<aop:declare-parents types-matching="com.zhuguang.jack.service.MyServiceImpl"-->
+                                 <!--implement-interface="com.zhuguang.jack.aop.IntroductionIntf"-->
+                                 <!--delegate-ref="myintroduction"/>-->
+            <!--id:表示这个pointcut的名称，以方便使用-->
+            <aop:pointcut id="myMethod2"
+                          expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <aop:before method="before" pointcut-ref="myMethods"/>
+            <aop:after method="after" pointcut-ref="myMethod2"/>
+            <!-- 后置通知  returning="returnVal" 定义返回值 必须与类中声明的名称一样-->
+            <aop:after-returning method="afterReturning" returning="returnVal" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <!--异常通知 throwing="throwable" 指定异常通知错误信息变量,必须与类中声明的名称一样-->
+            <!--<aop:after-throwing method="afterthrowing" throwing="e" pointcut-ref="myMethods"/>-->
+            <aop:around method="around" pointcut-ref="myMethod2"/>
+        </aop:aspect>
+        <aop:aspect ref="aspectXml2" order="1">
+            <!--id:表示这个pointcut的名称，以方便使用-->
+            <aop:pointcut id="myMethod3"
+                          expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <aop:before method="before" pointcut-ref="myMethods"/>
+            <aop:after method="after" pointcut-ref="myMethod3"/>
+            <!-- 后置通知  returning="returnVal" 定义返回值 必须与类中声明的名称一样-->
+            <aop:after-returning method="afterReturning" returning="returnVal" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <!--异常通知 throwing="throwable" 指定异常通知错误信息变量,必须与类中声明的名称一样-->
+            <!--<aop:after-throwing method="afterthrowing" throwing="e" pointcut-ref="myMethods"/>-->
+            <aop:around method="around" pointcut-ref="myMethod3"/>
+        </aop:aspect>
+
+    </aop:config>
+
+    <!--<aop:aspectj-autoproxy/>-->
 </beans>

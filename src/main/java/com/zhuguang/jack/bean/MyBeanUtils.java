@@ -9,6 +9,7 @@ public class MyBeanUtils {
         Object propertyValue = null;
         try {
             PropertyDescriptor pd = new PropertyDescriptor(propertyName, bean.getClass());
+            //getUsername method
             Method method = pd.getReadMethod();
             propertyValue = method.invoke(bean);
         } catch (Exception e) {
@@ -20,6 +21,7 @@ public class MyBeanUtils {
 
     public static void setProperty(Object bean, String name, Object value) {
         try {
+            //內省
             PropertyDescriptor pd = new PropertyDescriptor(name, bean.getClass());
             Method method = pd.getWriteMethod();
             method.invoke(bean, value);

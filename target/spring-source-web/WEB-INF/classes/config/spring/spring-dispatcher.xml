@@ -39,8 +39,11 @@
 				</list>
 			</property>
 		</bean>  -->
-	<mvc:annotation-driven/>
-	<context:component-scan base-package="com.zhuguang.jack"/>
+	<context:component-scan base-package="com.zhuguang.jack" use-default-filters="true">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Component"/>-->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	</context:component-scan>
 
 	<context:property-placeholder location="classpath:config/core/core.properties" />
 
@@ -64,44 +67,7 @@
 		</property>
 	</bean>
 
-	<bean id="student" class="com.zhuguang.jack.testbean.Student" >
-		<description></description>
-		<meta key="key" value="value"></meta>
-		<lookup-method name="getCar" bean="hongqi"></lookup-method>
-		<property name="list[0]" value="1"></property>
-		<property name="list[1]" value="2"></property>
-		<property name="list[2]" value="3"></property>
-
-		<property name="mylist">
-			<list>
-				<value>a</value>
-				<value>b</value>
-				<value>c</value>
-			</list>
-		</property>
-
-		<property name="param" value="1234"></property>
-		<property name="map">
-			<map>
-				<entry key="key1" value="value1"></entry>
-				<entry key="key2" value="value2"></entry>
-			</map>
-		</property>
-	</bean>
-
-	<bean id="service" class="com.zhuguang.jack.testbean.TestServiceImpl">
-	</bean>
-
-	<!-- 开启controller注解支持 -->
-	<!-- 注：如果base-package=com.avicit 则注解事务不起作用 TODO 读源码
-		<context:component-scan base-package="com.zhuguang">
-			<context:include-filter type="annotation"
-				expression="org.springframework.stereotype.Controller" />
-			<context:exclude-filter type="annotation"
-				expression="org.springframework.stereotype.Service" />
-		</context:component-scan>-->
-
-	<mvc:resources mapping="/**" location="/index" />
+	<!--<mvc:resources mapping="/**" location="/index" />-->
 	<!--
 		<mvc:interceptors>
 
@@ -144,7 +110,6 @@
 		</property>
 	</bean>
 
-	<!---->
 		<bean
 			class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
 			<property name="mediaTypes">
@@ -166,7 +131,6 @@
 			</property>
 		</bean>
 	<!-- 支持上传文件 -->
-
 	<!-- 控制器异常处理 -->
 	<bean id="exceptionResolver"
 		  class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
