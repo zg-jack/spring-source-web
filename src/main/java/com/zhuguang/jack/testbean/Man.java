@@ -1,10 +1,9 @@
 package com.zhuguang.jack.testbean;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 public class Man implements People {
 
-    @Autowired
+//    @Lazy
+//    @Autowired
     Son son;
 
     @Override

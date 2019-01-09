@@ -32,7 +32,7 @@
         <!--<property name="woman" ref="woman"></property>-->
     </bean>
 
-    <bean class="com.zhuguang.jack.scope.ScopeTest" id="scopeTest" scope="request">
+    <bean class="com.zhuguang.jack.scope.ScopeTest" id="scopeTest" scope="session">
         <!-- 通知Spring容器去代理这个bean -->
         <!--scope为request的bean，在每个请求到来时，会创建一个实际对象与当前的请求 对应。而使用A的代理对象时，会通过某种方式获得当前的请求，再根据当前这个请求，获得对应A的实际对象。使用代理对象间接操控的就是与当前请求对应的A的实际对象。-->
         <aop:scoped-proxy/>
@@ -188,10 +188,12 @@ abstract="true" Spring不会实例化该bean
         <property name="map[key2]" value="jack2"></property>
     </bean>
 
+    <bean class="com.zhuguang.jack.prototype.PrototypeTest" id="prototypeTest" scope="prototype"></bean>
+
     <bean class="com.zhuguang.jack.prototype.PrototypeTestA" id="prototypeTestA" scope="prototype">
         <property name="prototypeTestB" ref="prototypeTestB"/>
     </bean>
-    <bean class="com.zhuguang.jack.prototype.PrototypeTestB" id="prototypeTestB" >
+    <bean class="com.zhuguang.jack.prototype.PrototypeTestB" id="prototypeTestB" scope="prototype">
         <property name="prototypeTestA" ref="prototypeTestA"/>
     </bean>
 
@@ -215,7 +217,7 @@ abstract="true" Spring不会实例化该bean
     <!--proxy-target-class="true" cglib proxy-target-class="false"或者默认省略 jdk-->
     <bean class="com.zhuguang.jack.aop.aspect.AspectXml1" id="aspectXml1"/>
     <bean class="com.zhuguang.jack.aop.aspect.AspectXml2" id="aspectXml2"/>
-
+    <bean class="com.zhuguang.jack.aop.aspect.AspectXml3" id="aspectXml3"/>
     <bean class="com.zhuguang.jack.aop.advisorAdvice" id="advisorAdvice"/>
 
     <aop:config proxy-target-class="true">
@@ -257,6 +259,25 @@ abstract="true" Spring不会实例化该bean
             <aop:around method="around" pointcut-ref="myMethod3"/>
         </aop:aspect>
 
+    </aop:config>
+    <aop:config>
+        <aop:pointcut id="myMethods"
+                      expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+        <aop:aspect id="aspect3" ref="aspectXml3" order="0">
+            <!--<aop:declare-parents types-matching="com.zhuguang.jack.service.MyServiceImpl"-->
+            <!--implement-interface="com.zhuguang.jack.aop.IntroductionIntf"-->
+            <!--delegate-ref="myintroduction"/>-->
+            <!--id:表示这个pointcut的名称，以方便使用-->
+            <aop:pointcut id="myMethod2"
+                          expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <aop:before method="before" pointcut-ref="myMethods"/>
+            <aop:after method="after" pointcut-ref="myMethod2"/>
+            <!-- 后置通知  returning="returnVal" 定义返回值 必须与类中声明的名称一样-->
+            <aop:after-returning method="afterReturning" returning="returnVal" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <!--异常通知 throwing="throwable" 指定异常通知错误信息变量,必须与类中声明的名称一样-->
+            <!--<aop:after-throwing method="afterthrowing" throwing="e" pointcut-ref="myMethods"/>-->
+            <aop:around method="around" pointcut-ref="myMethod2"/>
+        </aop:aspect>
     </aop:config>
 
     <!--<aop:aspectj-autoproxy/>-->

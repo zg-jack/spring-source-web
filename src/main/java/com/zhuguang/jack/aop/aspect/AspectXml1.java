@@ -1,9 +1,11 @@
 package com.zhuguang.jack.aop.aspect;
 
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 public class AspectXml1 {
-    public void before(){
+    public void before(JoinPoint joinPoint){
+        System.out.println(joinPoint.getSignature().getName());
         System.out.println("AspectXml1====前置通知");
     }
 

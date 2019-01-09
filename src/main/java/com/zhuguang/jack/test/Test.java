@@ -17,31 +17,33 @@ public class Test {
 //        context.setAllowBeanDefinitionOverriding(true);
 //        context.setAllowCircularReferences(true);
 //        context.refresh();
-        Son son = (Son)context.getBean("son");
-        System.out.println(son.getUsername()+":" + son.getAge());
+        Son son = (Son) context.getBean("son");
+        System.out.println(son.getUsername() + ":" + son.getAge());
 
-        ListInjectTest injectTest = (ListInjectTest)context.getBean("injectTest");
-        TypeClass typeClass = (TypeClass)context.getBean("typeClass");
+        ListInjectTest injectTest = (ListInjectTest) context.getBean("injectTest");
+        TypeClass typeClass = (TypeClass) context.getBean("typeClass");
         System.out.println(typeClass.getDate());
         System.out.println(typeClass.getConsultRecord().getName());
 
         List<String> list = injectTest.getList();
-        if(list != null) {
+        if (list != null) {
             for (String o : list) {
                 System.out.println("list : " + o);
             }
         }
-        
-        Map<String,String> map = injectTest.getMap();
-        if(map != null) {
+
+        Map<String, String> map = injectTest.getMap();
+        if (map != null) {
             System.out.println("======");
-            for(Map.Entry<String,String> entry : map.entrySet()) {
+            for (Map.Entry<String, String> entry : map.entrySet()) {
                 System.out.println(entry.getKey() + " : " + entry.getValue());
             }
         }
+
 //        prototypeTest(context);
 //        prototypecircularreference(context);
-        requestScope(context);
+//        requestScope(context);
+        customScopeTest(context);
     }
 
     public static void prototypeTest(final ApplicationContext context) {
@@ -49,7 +51,7 @@ public class Test {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    System.out.println(context.getBean("prototypeTestA"));
+                    System.out.println(context.getBean("prototypeTest"));
                 }
             }).start();
         }
@@ -64,4 +66,19 @@ public class Test {
         Object scopeTest = context.getBean("scopeTest");
         System.out.println(scopeTest);
     }
+
+    public static void customScopeTest(final ApplicationContext context) {
+        for (int i = 0; i < 10; i++) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i1 = 0; i1 < 2; i1++) {
+                        System.out.println(Thread.currentThread().getId() + "-->" + context.getBean("customScopeBean"));
+                    }
+                }
+            }).start();
+        }
+
+    }
+
 }
