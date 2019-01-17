@@ -143,14 +143,6 @@
 		</property>
 	</bean>
 
-
-	<bean id="propertyConfigurer"  class="com.zhuguang.jack.springconfig.LoadProperties">
-		<property name="locations">
-			<value>classpath*:config/core/config.properties</value>
-		</property>
-	</bean>
-
-
 	<!--<bean id="myservice" class="com.zhuguang.jack.service.MyServiceImpl"></bean>
 	<bean id="myaspectj" class="com.zhuguang.jack.aop.AopAspectj"></bean>
 	<bean id="myintroduction" class="com.zhuguang.jack.aop.IntroductionClass"></bean>
@@ -159,33 +151,6 @@
 
 	<bean id="anno" class="com.zhuguang.jack.annotationaop.MyInterceptor"></bean>-->
 
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-		<property name="driverClass">
-			<value>${jdbc.driverClassName}</value>
-		</property>
-		<property name="jdbcUrl">
-			<value>${jdbc.url}</value>
-		</property>
-		<property name="user">
-			<value>${jdbc.username}</value>
-		</property>
-		<property name="password">
-			<value>${jdbc.password}</value>
-		</property>
-		<property name="minPoolSize" value="10" />
-		<property name="maxPoolSize" value="100" />
-		<property name="maxIdleTime" value="1800" />
-		<property name="acquireIncrement" value="3" />
-		<property name="maxStatements" value="1000" />
-		<property name="initialPoolSize" value="10" />
-		<property name="idleConnectionTestPeriod" value="60" />
-		<property name="acquireRetryAttempts" value="30" />
-		<property name="breakAfterAcquireFailure" value="false" />
-		<property name="testConnectionOnCheckout" value="false" />
-		<property name="acquireRetryDelay">
-			<value>100</value>
-		</property>
-	</bean>
 
 <!--	<bean id="oracle" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
 		<property name="driverClass">
@@ -236,42 +201,6 @@
 	<bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
 		<property name="properties" ref="vendorProperties" />
 	</bean>-->
-
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="mapperLocations">
-			<value>classpath*:com/zhuguang/jack/xml/*Mapper.xml</value>
-		</property>
-		<!--<property name="databaseIdProvider" ref="databaseIdProvider" />-->
-		<!--<property name="plugins">
-				<array>
-					<bean class="com.zhuguang.jack.mybatisInterceptor.ExectorInterceptor"></bean>
-					<bean class="com.zhuguang.jack.mybatisInterceptor.PageInterceptor"></bean>
-					<bean class="com.zhuguang.jack.mybatisInterceptor.ResultSetCacheInterceptor"></bean>
-				</array>
-			</property>
-		<property name="plugins">
-			<array>
-				<bean class="com.zhuguang.jack.mybatisInterceptor.MyPubResultSetHandler"></bean>
-				<bean class="com.zhuguang.jack.mybatisInterceptor.CacheExecutorPlugin"></bean>
-			</array>
-		</property>-->
-	</bean>
-
-	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="annotationClass" value="org.springframework.stereotype.Repository"/>
-		<property name="basePackage" value="com.zhuguang.jack.dao"/>
-
-		<!--这样会导致property-placeholder加载配置文件失效
-			<property name="sqlSessionFactory" ref="sqlSessionFactory"/>-->
-
-		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
-	</bean>
-
-
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"/>
-	</bean>
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	<!--<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
 			<tx:attributes>
@@ -322,7 +251,7 @@
 				</aop:aspect>
 			</aop:config>
 		<aop:aspectj-autoproxy proxy-target-class="true"/>-->
-	<aop:aspectj-autoproxy/>
+	<!--<aop:aspectj-autoproxy/>-->
 </beans>
 	
 	

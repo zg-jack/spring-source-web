@@ -1,0 +1,65 @@
+     <bean class="com.zhuguang.jack.aop.aspect.AspectXml1" id="aspectXml1"/>
+        <bean class="com.zhuguang.jack.aop.aspect.AspectXml2" id="aspectXml2"/>
+        <bean class="com.zhuguang.jack.aop.aspect.AspectXml3" id="aspectXml3"/>
+        <bean class="com.zhuguang.jack.aop.advisorAdvice" id="advisorAdvice"/>
+
+    <!--<aop:config proxy-target-class="false">
+        &lt;!&ndash;<aop:pointcut>在此处定义的pointcut是全局的pointcut可以供所有的aspect使用&ndash;&gt;
+        &lt;!&ndash;id:表示这个pointcut的名称，以方便使用&ndash;&gt;
+        <aop:pointcut id="addpointcut"
+                      expression="execution(public * com.zhuguang.jack.service..*.add(..))"/>
+        <aop:pointcut id="delpointcut"
+                      expression="execution(public * com.zhuguang.jack.service..*.del*(..))"/>
+        <aop:pointcut id="myMethods"
+                      expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+        &lt;!&ndash;advisor必须在aspect之前，要不然有xml约束报错&ndash;&gt;
+        <aop:advisor advice-ref="advisorAdvice" order="2" pointcut-ref="myMethods"/>
+        <aop:aspect id="aspect1" ref="aspectXml1" order="0">
+            &lt;!&ndash;<aop:declare-parents types-matching="com.zhuguang.jack.service.MyServiceImpl"&ndash;&gt;
+            &lt;!&ndash;implement-interface="com.zhuguang.jack.aop.IntroductionIntf"&ndash;&gt;
+            &lt;!&ndash;delegate-ref="myintroduction"/>&ndash;&gt;
+            &lt;!&ndash;id:表示这个pointcut的名称，以方便使用&ndash;&gt;
+            <aop:pointcut id="myMethod2"
+                          expression="execution(public * com.zhuguang.jack.service..*.*(..)) and @annotation(org.springframework.web.bind.annotation.RequestMapping)"/>
+            <aop:before method="before" pointcut-ref="myMethods"/>
+            <aop:after method="after" pointcut-ref="myMethod2"/>
+            &lt;!&ndash; 后置通知  returning="returnVal" 定义返回值 必须与类中声明的名称一样&ndash;&gt;
+            <aop:after-returning method="afterReturning" returning="returnVal"
+                                 pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            &lt;!&ndash;异常通知 throwing="throwable" 指定异常通知错误信息变量,必须与类中声明的名称一样&ndash;&gt;
+            &lt;!&ndash;<aop:after-throwing method="afterthrowing" throwing="e" pointcut-ref="myMethods"/>&ndash;&gt;
+            <aop:around method="around" pointcut-ref="myMethod2"/>
+        </aop:aspect>
+        <aop:aspect ref="aspectXml2" order="1">
+            &lt;!&ndash;id:表示这个pointcut的名称，以方便使用&ndash;&gt;
+            <aop:pointcut id="myMethod3"
+                          expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <aop:before method="before" pointcut-ref="myMethods"/>
+            <aop:after method="after" pointcut-ref="myMethod3"/>
+            &lt;!&ndash; 后置通知  returning="returnVal" 定义返回值 必须与类中声明的名称一样&ndash;&gt;
+            <aop:after-returning method="afterReturning" returning="returnVal" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            &lt;!&ndash;异常通知 throwing="throwable" 指定异常通知错误信息变量,必须与类中声明的名称一样&ndash;&gt;
+            &lt;!&ndash;<aop:after-throwing method="afterthrowing" throwing="e" pointcut-ref="myMethods"/>&ndash;&gt;
+            <aop:around method="around" pointcut-ref="myMethod3"/>
+        </aop:aspect>
+
+    </aop:config>-->
+    <!--<aop:config proxy-target-class="false">
+        <aop:pointcut id="myMethods"
+                      expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+        <aop:aspect id="aspect3" ref="aspectXml3" order="0">
+            &lt;!&ndash;<aop:declare-parents types-matching="com.zhuguang.jack.service.MyServiceImpl"&ndash;&gt;
+            &lt;!&ndash;implement-interface="com.zhuguang.jack.aop.IntroductionIntf"&ndash;&gt;
+            &lt;!&ndash;delegate-ref="myintroduction"/>&ndash;&gt;
+            &lt;!&ndash;id:表示这个pointcut的名称，以方便使用&ndash;&gt;
+            <aop:pointcut id="myMethod2"
+                          expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            <aop:before method="before" pointcut-ref="myMethods"/>
+            <aop:after method="after" pointcut-ref="myMethod2"/>
+            &lt;!&ndash; 后置通知  returning="returnVal" 定义返回值 必须与类中声明的名称一样&ndash;&gt;
+            <aop:after-returning method="afterReturning" returning="returnVal" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
+            &lt;!&ndash;异常通知 throwing="throwable" 指定异常通知错误信息变量,必须与类中声明的名称一样&ndash;&gt;
+            &lt;!&ndash;<aop:after-throwing method="afterthrowing" throwing="e" pointcut-ref="myMethods"/>&ndash;&gt;
+            <aop:around method="around" pointcut-ref="myMethod2"/>
+        </aop:aspect>
+    </aop:config>-->

@@ -3,7 +3,7 @@
 <mapper namespace="com.zhuguang.jack.dao.CommonMapper" >
 	<!-- 开启二级缓存 
 		<cache></cache>-->
-	<resultMap id="RECORDResultMap" type="com.zhuguang.com.zhuguang.jack.bean.ConsultRecord" >
+	<resultMap id="RECORDResultMap" type="com.zhuguang.jack.bean.ConsultRecord" >
 		<id column="ID" property="id"/>
 		<result column="PSPTID" property="psptId" jdbcType="VARCHAR" />
 		<result column="NAME" property="name" jdbcType="VARCHAR" />
@@ -16,7 +16,7 @@
 		<result column="REMARK" property="remark" jdbcType="VARCHAR" />
 	</resultMap>
 	
-	<resultMap id="ContentResultMap" type="com.zhuguang.com.zhuguang.jack.bean.ConsultContent" >
+	<resultMap id="ContentResultMap" type="com.zhuguang.jack.bean.ConsultContent" >
 		<id column="ID" property="id"/>
 		<result column="ITEMINDEX" property="itemIndex"/>
 		<result column="CONTENT" property="content"/>
@@ -24,7 +24,7 @@
 		<result column="STATE" property="state"/>
 	</resultMap>
 	
-	<resultMap id="ContractResultMap" type="com.zhuguang.com.zhuguang.jack.bean.ConsultContract" >
+	<resultMap id="ContractResultMap" type="com.zhuguang.jack.bean.ConsultContract" >
 		<id column="CONTRACT_ID" property="contractId"/>
 		<result column="PSPTID" property="psptId"/>
 		<result column="CONTRACT_CODE" property="contractCode"/>
@@ -32,13 +32,13 @@
 		<result column="STATE" property="state"/>
 	</resultMap>
 	
-	<resultMap id="CountResultMap" type="com.zhuguang.com.zhuguang.jack.bean.ConsultRecordCount" >
+	<resultMap id="CountResultMap" type="com.zhuguang.jack.bean.ConsultRecordCount" >
 		<result column="PSPTID" property="psptId" jdbcType="VARCHAR" />
 		<result column="ISPRODUCE" property="isproduce"/>
 		<result column="UNPRODUCE" property="unproduce"/>
 	</resultMap>
 	
-	<resultMap id="AreaResultMap" type="com.zhuguang.com.zhuguang.jack.bean.ConsultConfigArea" >
+	<resultMap id="AreaResultMap" type="com.zhuguang.jack.bean.ConsultConfigArea" >
 		<result column="AREACODE" property="areaCode" jdbcType="VARCHAR" />
 		<result column="AREANAME" property="areaName" jdbcType="VARCHAR"/>
 		<result column="STATE" property="state"/>
@@ -73,7 +73,7 @@
 		where psptId = #{psptId,jdbcType=VARCHAR}
 	</update>
 	
-	<update id="updateArea"  parameterType="com.zhuguang.com.zhuguang.jack.bean.ConsultConfigArea">
+	<update id="updateArea"  parameterType="com.zhuguang.jack.bean.ConsultConfigArea">
 		update consult_configarea 
 		<set>
 			<if test="areaCode != null" >
@@ -258,7 +258,7 @@
 		</if>
 	</select>
 	
-	<insert id="saveArea" parameterType="com.zhuguang.com.zhuguang.jack.bean.ConsultConfigArea">
+	<insert id="saveArea" parameterType="com.zhuguang.jack.bean.ConsultConfigArea">
 		<!--<SelectKey></SelectKey>-->
 	insert into consult_configarea (AREACODE, AREANAME, STATE)
 		values (#{areaCode,jdbcType=VARCHAR}, #{areaName,jdbcType=VARCHAR},#{state,jdbcType=VARCHAR})
@@ -270,7 +270,7 @@
 		
 	</delete>
 	
-	<delete id="deleteArea" parameterType="com.zhuguang.com.zhuguang.jack.bean.ConsultConfigArea">
+	<delete id="deleteArea" parameterType="com.zhuguang.jack.bean.ConsultConfigArea">
 		
 		delete from consult_configarea where areaCode in 
 		<foreach item="item" index="index" collection="areaCodes" open="(" separator="," close=")">
@@ -279,14 +279,14 @@
 		
 	</delete>
   
-	<insert id="saveUser" parameterType="com.zhuguang.com.zhuguang.jack.bean.ConsultIdCardInfo">
+	<insert id="saveUser" parameterType="com.zhuguang.jack.bean.ConsultIdCardInfo">
   	
 	insert into consult_idcardinfo (PSPTID, NAME, BIRTHDAY,SEX,ADDRESS,ACTIVETIME,PICTURE,NATION)
 		values (#{psptId,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR},str_to_date(#{birthday,jdbcType=VARCHAR},'%Y-%m-%d'),
 		#{sex,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},str_to_date(#{activeTime,jdbcType=VARCHAR},'%Y-%m-%d %T'),#{picture,jdbcType=VARCHAR},#{nation,jdbcType=VARCHAR})
 	</insert>
   
-	<insert id="saveRecord" parameterType="com.zhuguang.com.zhuguang.jack.bean.ConsultRecord">
+	<insert id="saveRecord" parameterType="com.zhuguang.jack.bean.ConsultRecord">
   	
 	insert into consult_record(PSPTID,ACTIVETIME,AUTOGRAPH,
 		<if test="ispass != null and ispass != ''">
@@ -306,7 +306,7 @@
 		#{fingerprint,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{printFlag,jdbcType=VARCHAR})
 	</insert>
 	
-	<insert id="saveRecordCount" parameterType="com.zhuguang.com.zhuguang.jack.bean.ConsultRecordCount">
+	<insert id="saveRecordCount" parameterType="com.zhuguang.jack.bean.ConsultRecordCount">
   	
 	insert into consult_recordcount(PSPTID,ISPRODUCE,UNPRODUCE)
 		values (#{psptId,jdbcType=VARCHAR},#{isproduce},#{unproduce})

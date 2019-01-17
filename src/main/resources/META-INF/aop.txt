@@ -1,4 +1,6 @@
 AspectJAwareAdvisorAutoProxyCreator
+AnnotationAwareAspectJAutoProxyCreator
+
 MethodLocatingFactoryBean
 SimpleBeanFactoryAwareAspectInstanceFactory
 
@@ -11,7 +13,32 @@ AspectJAroundAdvice.class;
 AspectJExpressionPointcut
 AspectJPointcutAdvisor
 
+DefaultBeanFactoryPointcutAdvisor
+
+
+MethodInvocationProceedingJoinPoint
+
 advisor:可以理解为一个pointCut和一个advice的封装，是一个切面
+
+1、<aop:before method="before" pointcut-ref="myMethods"/>包装成一个advisor
+2、AspectJAwareAdvisorAutoProxyCreator，当实例化所有bean都会执行到AspectJAwareAdvisorAutoProxyCreator类
+它会检测bean是否advisor以及advice存在，如果有就说明这个bean有切面，有切面那么就会生成代理
+3、jdk的代理，bean里面的所有advisor加入到proxyFactory。
+4、jdkDynamicProxy invoke，拿到bean里面的所有Interceptor，会循环proxyFactory里面的所有advisor
+里面有advice，里面的advice有两种类型，要么是advice，要么是MethodInterceptor类型的
+5、当代理对象调用方式，是一个MethodInterceptor类型的类的链式调用过程，直到容器的大小和索引一致的时候调用JoinPoint目标方法
+
+before：this.advice.before(),invocation.processd();
+装配参数，切面里面before方法的method对象，method.getParamterTypes()[0]
+
+最终会把advice封装成MethodInterceptor类型的对象
+
+
+
+事务属性类
+NameMatchTransactionAttributeSource
+
+
 
  1）连接点（Joinpoint）
 程序执行的某个特定位置：如类开始初始化前、类初始化后、类某个方法调用前、调用后、方法抛出异常后。一个类或一段程序代码拥有一些具有边界性质的特定点，这些点中的特定点就称为“连接点”。Spring仅支持方法的连接点，即仅能在方法调用前、方法调用后、方法抛出异常时以及方法调用前后这些程序执行点织入增强。连接点由两个信息确定：第一是用方法表示的程序执行点；第二是用相对点表示的方位。
@@ -38,5 +65,67 @@ Spring采用动态代理织入，而AspectJ采用编译期织入和类装载期�
 7）代理（Proxy）
 一个类被AOP织入增强后，就产出了一个结果类，它是融合了原类和增强逻辑的代理类。根据不同的代理方式，代理类既可能是和原类具有相同接口的类，也可能就是原类的子类，所以我们可以采用调用原类相同的方式调用代理类。
 
-8）切面（Aspect）
+8）切面（Aspect）  advisor
 切面由切点和增强（引介）组成，它既包括了横切逻辑的定义，也包括了连接点的定义，Spring AOP就是负责实施切面的框架，它将切面所定义的横切逻辑织入到切面所指定的连接点中。
+
+
+PROPAGATION_REQUIRED
+如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。这是最常见的选择。
+
+PROPAGATION_SUPPORTS
+支持当前事务，如果当前没有事务，就以非事务方式执行。
+
+PROPAGATION_MANDATORY
+使用当前的事务，如果当前没有事务，就抛出异常。
+
+PROPAGATION_REQUIRES_NEW
+新建事务，如果当前存在事务，把当前事务挂起。
+
+PROPAGATION_NOT_SUPPORTED
+以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+
+PROPAGATION_NEVER
+以非事务方式执行，如果当前存在事务，则抛出异常。
+
+PROPAGATION_NESTED
+如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则执行与PROPAGATION_REQUIRED类似的操作。
+
+数据库隔离级别
+spring隔离级别
+
+1. ISOLATION_DEFAULT：
+默认的隔离级别，使用数据库默认的事务隔离级别.（另外四个与JDBC的隔离级别相对应）
+
+2. ISOLATION_READ_UNCOMMITTED： 
+这是事务最低的隔离级别，它允许另外一个事务可以看到这个事务未提交的数据。
+这种隔离级别会产生脏读，不可重复读和幻像读。
+
+3. ISOLATION_READ_COMMITTED： 
+保证一个事务修改的数据提交后才能被另外一个事务读取，另外一个事务不能读取该事务未提交的数据
+
+4. ISOLATION_REPEATABLE_READ： 
+这种事务隔离级别可以防止脏读，不可重复读。但是可能出现幻像读。
+它除了保证一个事务不能读取另一个事务未提交的数据外，还保证了避免下面的情况产生(不可重复读)。
+     
+5. ISOLATION_SERIALIZABLE 
+这是花费最高代价但是最可靠的事务隔离级别。事务被处理为顺序执行。
+除了防止脏读，不可重复读外，还避免了幻像读。 
+
+脏读: 
+指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，
+这时，另外一个事务也访问这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据，
+那么另外一 个事务读到的这个数据是脏数据，依据脏数据所做的操作可能是不正确的。
+
+
+不可重复读:
+指在一个事务内，多次读同一数据。在这个事务还没有结束时，另外一个事务也访问该同一数据。
+那么，在第一个事务中的两次读数据之间，由于第二个事务的修改，那么第一个事务两次读到的数据可能是不一样的。
+这样就发生了在一个事务内两次读到的数据是不一样的，因此称为是不可重复读。
+
+
+幻觉读: 
+指当事务不是独立执行时发生的一种现象，例如第一个事务对一个表中的数据进行了修改，这种修改涉及
+到表中的全部数据行。同时，第二个事务也修改这个表中的数据，这种修改是向表中插入一行新数据。
+那么，以后就会发生操作第一个事务的用户发现表中还有没有修改的数据行，就好象发生了幻觉一样。
+
+docker run -ti -d -p 3307:3306 -v /home/mysqlconfig/mysql/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf -v /home/mysqlconfig/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql mysql:5.6

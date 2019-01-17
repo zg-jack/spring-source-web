@@ -1,18 +1,28 @@
 package com.zhuguang.jack.test;
 
+import com.zhuguang.jack.bean.ConsultConfigArea;
+import com.zhuguang.jack.dao.CommonMapper;
 import com.zhuguang.jack.service.MyService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.HashMap;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath*:config/spring/applicationContext-core.xml")
 public class MyTest {
 
     @Autowired
+    @Qualifier("myServiceImpl")
     MyService myService;
+
+    @Autowired
+    @Qualifier("annotationServiceImpl")
+    MyService myService1;
 
     @Test
     public void test1() {
@@ -25,8 +35,30 @@ public class MyTest {
     }
 
     @Test
+    public void aop1() {
+        myService1.doSomething("Jack");
+    }
+
+    @Test
     public void aopThrowtest() {
         myService.throwTest("Jack");
+    }
+
+    @Autowired
+    CommonMapper commonMapper;
+
+    @Test
+    public void test2() {
+        System.out.println(commonMapper.queryContent(new HashMap()));
+    }
+
+    @Test
+    public void test3() {
+        ConsultConfigArea area = new ConsultConfigArea();
+        area.setAreaCode("HB");
+        area.setAreaName("HB");
+        area.setState("1");
+        myService1.saveArea(area);
     }
 
 }

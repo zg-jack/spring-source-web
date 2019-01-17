@@ -1,10 +1,12 @@
 package com.zhuguang.jack.dao;
 
 import com.zhuguang.jack.bean.*;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 
+@Repository
 public interface CommonMapper {
     
     int saveArea(ConsultConfigArea area);
