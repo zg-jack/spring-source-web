@@ -30,7 +30,8 @@
         </property>
     </bean>
 
-    <context:component-scan base-package="com.zhuguang.jack" use-default-filters="true">
+    <context:component-scan base-package="com.zhuguang.jack"
+                            use-default-filters="true" annotation-config="true">
         <!--<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>-->
         <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>-->
         <!--<context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>-->
@@ -286,10 +287,14 @@ abstract="true" Spring不会实例化该bean
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
         <property name="dataSource" ref="dataSource"/>
     </bean>
-    <tx:advice id="userTxAdvice" transaction-manager="transactionManager">
+<!--    <tx:advice id="userTxAdvice" transaction-manager="transactionManager">
         <tx:attributes>
-            <!--只有目标方法是save开头的才会有事务属性-->
-            <tx:method name="save*" propagation="REQUIRED" read-only="false"
+            &lt;!&ndash;只有目标方法是save开头的才会有事务属性&ndash;&gt;
+            &lt;!&ndash;<tx:method name="save*" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.RuntimeException" isolation="DEFAULT"/>&ndash;&gt;
+            <tx:method name="saveTest" propagation="REQUIRED" read-only="false"
+                       rollback-for="java.lang.RuntimeException" isolation="DEFAULT"/>
+            <tx:method name="saveTest1" propagation="NESTED" read-only="false"
                        rollback-for="java.lang.RuntimeException" isolation="DEFAULT"/>
             <tx:method name="delete*" propagation="NESTED" read-only="false"
                        rollback-for="java.lang.RuntimeException"/>
@@ -307,10 +312,14 @@ abstract="true" Spring不会实例化该bean
         <aop:pointcut id="pc"
                       expression="execution(public * com.zhuguang.jack.service..*.*(..))"/>
         <aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice"/>
-    </aop:config>
+    </aop:config>-->
 
     <aop:aspectj-autoproxy/>
-    <!--<tx:annotation-driven transaction-manager="transactionManager"/>-->
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!--<bean class="com.zhuguang.jack.smtransation.MyServiceImpl" id="smmyServiceImpl">
         <property name="txManager" ref="transactionManager"/>

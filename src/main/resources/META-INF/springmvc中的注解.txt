@@ -1,0 +1,95 @@
+使用 URI 模板
+URI 模板就是在URI 中给定一个变量，然后在映射的时候动态的给该变量赋值。如URI 模板http://localhost/app/{variable1}/index.html ，
+这个模板里面包含一个变量variable1 ，那么当我们请求http://localhost/app/hello/index.html 的时候，该URL 就跟模板相匹配，
+只是把模板中的variable1 用hello 来取代。在SpringMVC 中，这种取代模板中定义的变量的值也可以给处理器方法使用，
+这样我们就可以非常方便的实现URL 的RestFul 风格。这个变量在SpringMVC 中是使用@PathVariable 来标记的。在SpringMVC 中，
+我们可以使用@PathVariable 来标记一个Controller 的处理方法参数，表示该参数的值将使用URI 模板中对应的变量的值来赋值。
+@Controller
+@RequestMapping ( "/test/{variable1}" )
+public class MyController {
+    @RequestMapping ( "/showView/{variable2}" )
+    public ModelAndView showView( @PathVariable String variable1, @PathVariable ( "variable2" ) int variable2) {
+       ModelAndView modelAndView = new ModelAndView();
+       modelAndView.setViewName( "viewName" );
+       modelAndView.addObject( " 需要放到 model 中的属性名称 " , " 对应的属性值，它是一个对象 " );
+       return modelAndView;
+    }
+}
+
+使用 @RequestParam 绑定 HttpServletRequest 请求参数到控制器方法参数
+@RequestMapping ( "requestParam" )
+   public String testRequestParam( @RequestParam(required=false) String name, @RequestParam ( "age" ) int age) {
+       return "requestParam" ;
+}
+在上面代码中利用@RequestParam 从HttpServletRequest 中绑定了参数name 到控制器方法参数name ，
+绑定了参数age 到控制器方法参数age 。值得注意的是和@PathVariable 一样，当你没有明确指定从request 中取哪个参数时，
+Spring 在代码是debug 编译的情况下会默认取跟方法参数同名的参数，如果不是debug 编译的就会报错。此外，
+当需要从request 中绑定的参数和方法的参数名不相同的时候，也需要在@RequestParam 中明确指出是要绑定哪个参数。
+在上面的代码中如果我访问/requestParam.do?name=hello&age=1 则Spring 将会把request请求参数name 的值hello
+赋给对应的处理方法参数name ，把参数age 的值1 赋给对应的处理方法参数age 。
+
+在@RequestParam 中除了指定绑定哪个参数的属性value 之外，还有一个属性required ，它表示所指定的参数是否必须在request 属性中存在，
+默认是true ，表示必须存在，当不存在时就会报错。在上面代码中我们指定了参数name 的required 的属性为false ，
+而没有指定age 的required 属性，这时候如果我们访问/requestParam.do而没有传递参数的时候，系统就会抛出异常，
+因为age 参数是必须存在的，而我们没有指定。而如果我们访问/requestParam.do?age=1 的时候就可以正常访问，因为我们传递了必须的参数age ，
+而参数name 是非必须的，不传递也可以。
+
+使用 @CookieValue 绑定 cookie 的值到 Controller 方法参数
+@RequestMapping ( "cookieValue" )
+    public String testCookieValue( @CookieValue ( "hello" ) String cookieValue, @CookieValue String hello) {
+       System. out .println(cookieValue + "-----------" + hello);
+       return "cookieValue" ;
+    }
+在上面的代码中我们使用@CookieValue 绑定了cookie 的值到方法参数上。上面一共绑定了两个参数，一个是明确指定要绑定的是名称为hello
+的cookie 的值，一个是没有指定。使用没有指定的形式的规则和@PathVariable、@RequestParam 的规则是一样的，
+即在debug 编译模式下将自动获取跟方法参数名同名的cookie 值。
+
+使用 @RequestHeader 注解绑定 HttpServletRequest 头信息到Controller 方法参数
+@RequestMapping ( "testRequestHeader" )
+public String testRequestHeader( @RequestHeader ( "Host" ) String hostAddr, @RequestHeader String Host, @RequestHeader String host ) {
+    System. out .println(hostAddr + "-----" + Host + "-----" + host );
+    return "requestHeader" ;
+}
+在上面的代码中我们使用了 @RequestHeader 绑定了 HttpServletRequest 请求头 host 到Controller 的方法参数。
+上面方法的三个参数都将会赋予同一个值，由此我们可以知道在绑定请求头参数到方法参数的时候规则和 @PathVariable 、 @RequestParam 以及
+@CookieValue 是一样的，即没有指定绑定哪个参数到方法参数的时候，在 debug 编译模式下将使用方法参数名作为需要绑定的参数。
+但是有一点 @RequestHeader 跟另外三种绑定方式是不一样的，那就是在使用 @RequestHeader 的时候是大小写不敏感的，
+即 @RequestHeader(“Host”) 和 @RequestHeader(“host”) 绑定的都是 Host 头信息。记住在 @PathVariable 、 @RequestParam 和
+@CookieValue 中都是大小写敏感的。
+
+@RequestMapping 的一些高级应用
+ 在RequestMapping 中除了指定请求路径value 属性外，还有其他的属性可以指定，如params 、method 和headers 。这样属性都可以用于缩小请求的映射范围。
+ 1.params属性
+ @RequestMapping (value= "testParams" , params={ "param1=value1" , "param2" , "!param3" })
+     public String testParams() {
+        System. out .println( "test Params..........." );
+        return "testParams" ;
+     }
+在上面的代码中我们用@RequestMapping 的params 属性指定了三个参数，这些参数都是针对请求参数而言的，它们分别表示参数param1
+的值必须等于value1 ，参数param2 必须存在，值无所谓，参数param3 必须不存在，只有当请求/testParams.do
+并且满足指定的三个参数条件的时候才能访问到该方法。所以当请求/testParams.do?param1=value1&param2=value2
+的时候能够正确访问到该testParams 方法，当请求/testParams.do?param1=value1&param2=value2&param3=value3
+的时候就不能够正常的访问到该方法，因为在@RequestMapping 的params 参数里面指定了参数param3 是不能存在的。
+
+2.method属性
+ @RequestMapping (value= "testMethod" , method={RequestMethod. GET , RequestMethod. DELETE })
+    public String testMethod() {
+       return "method" ;
+    }
+在上面的代码中就使用method 参数限制了以GET 或DELETE 方法请求/testMethod.do 的时候才能访问到该Controller 的testMethod 方法。
+
+3.headers属性
+@RequestMapping (value= "testHeaders" , headers={ "host=localhost" , "Accept" })
+    public String testHeaders() {
+       return "headers" ;
+    }
+headers 属性的用法和功能与params 属性相似。在上面的代码中当请求/testHeaders.do 的时候只有当请求头包含Accept 信息，
+且请求的host 为localhost 的时候才能正确的访问到testHeaders 方法。
+
+使用 @ModelAttribute 和 @SessionAttributes 传递和保存数据
+SpringMVC 支持使用 @ModelAttribute 和 @SessionAttributes 在不同的模型和控制器之间共享数据。 @ModelAttribute 主要有两种使用方式，
+一种是标注在方法上，一种是标注在 Controller 方法参数上。
+当 @ModelAttribute 标记在方法上的时候，该方法将在处理器方法执行之前执行，然后把返回的对象存放在 session 或模型属性中，
+属性名称可以使用 @ModelAttribute(“attributeName”) 在标记方法的时候指定，若未指定，则使用返回类型的类名称（首字母小写）作为属性名称。
+关于 @ModelAttribute 标记在方法上时对应的属性是存放在 session 中还是存放在模型中，我们来做一个实验，看下面一段代码。
+

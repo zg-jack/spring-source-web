@@ -14,4 +14,10 @@ public interface MyService {
     List<ConsultContent> queryContent(Map param);
 
     public int saveArea(ConsultConfigArea area);
+
+    public void saveTest(String param);
+
+    public void saveTest1(String param);
+
+    public void queryAllTest();
 }

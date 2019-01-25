@@ -39,7 +39,7 @@
 				</list>
 			</property>
 		</bean>  -->
-	<context:component-scan base-package="com.zhuguang.jack" use-default-filters="true">
+	<context:component-scan base-package="com.zhuguang.jack" use-default-filters="false">
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 		<!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Component"/>-->
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
@@ -59,36 +59,33 @@
 			<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
 		</bean>-->
 	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
-	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 		<property name="supportedMediaTypes">
 			<list>
 				<value>text/html;charset=UTF-8</value>
 			</list>
 		</property>
 	</bean>
+	<!--静态资源，location webapp根目录下的路径-->
+	<mvc:resources mapping="/css/**" location="/WEB-INF/css/"/>
+	<mvc:resources mapping="/images/**" location="/WEB-INF/img/"/>
+	<mvc:resources mapping="/js/**" location="/WEB-INF/js/"/>
 
-	<!--<mvc:resources mapping="/**" location="/index" />-->
-	<!--
-		<mvc:interceptors>
-
-			<mvc:interceptor>
-				<mvc:mapping path="/**" />
-				<bean
-					class="com.soshare.source.interceptor.dispatcher.AuthInterceptor"></bean>
-			</mvc:interceptor>
-
-			<mvc:interceptor>
-				<mvc:mapping path="/*" />
-				<bean
-					class="com.soshare.source.interceptor.dispatcher.HandlerDispatcherContextInterceptor"></bean>
-			</mvc:interceptor>
-			<mvc:interceptor>
-				<mvc:mapping path="/*" />
-				<bean
-					class="com.soshare.source.interceptor.pagination.HandlerPaginationInterceptor"></bean>
-			</mvc:interceptor>
-
-		</mvc:interceptors> -->
+	<bean id="userInterceptor" class="com.zhuguang.jack.handlerInterceptor.UserInterceptor"></bean>
+	<mvc:interceptors>
+		<!--
+		   /**的意思是所有文件夹及里面的子文件夹
+		   /*是所有文件夹，不含子文件夹
+		   /是web项目的根目录
+		 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/user/*" />
+			<!-- 需排除拦截的地址 -->
+			<!-- <mvc:exclude-mapping path="/userController/login"/>  -->
+			<ref bean="userInterceptor"/>
+		</mvc:interceptor>
+		<!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法  -->
+	</mvc:interceptors>
 	<!-- 配置视图解析 -->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/WEB-INF/jsp/" />
@@ -97,8 +94,13 @@
 
 	<!--<mvc:view-controller path="/" view-name="redirect:/index" />-->
 
-	<bean
-			class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="interceptors">
+			<list>
+				<bean class="com.zhuguang.jack.handlerInterceptor.AuthInterceptor"></bean>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="handlerAdapter"
 		  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
@@ -110,26 +112,6 @@
 		</property>
 	</bean>
 
-		<bean
-			class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
-			<property name="mediaTypes">
-				<map>
-					<entry key="json" value="application/json" />
-					<entry key="xml" value="application/xml" />
-					<entry key="html" value="text/html" />
-				</map>
-			</property>
-			<property name="viewResolvers">
-				<list>
-					<bean class="org.springframework.web.servlet.view.BeanNameViewResolver" />
-					<bean class="org.springframework.web.servlet.view.UrlBasedViewResolver">
-						<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
-						<property name="prefix" value="/" />
-						<property name="suffix" value=".jsp" />
-					</bean>
-				</list>
-			</property>
-		</bean>
 	<!-- 支持上传文件 -->
 	<!-- 控制器异常处理 -->
 	<bean id="exceptionResolver"
@@ -142,116 +124,6 @@
 			</props>
 		</property>
 	</bean>
-
-	<!--<bean id="myservice" class="com.zhuguang.jack.service.MyServiceImpl"></bean>
-	<bean id="myaspectj" class="com.zhuguang.jack.aop.AopAspectj"></bean>
-	<bean id="myintroduction" class="com.zhuguang.jack.aop.IntroductionClass"></bean>
-
-	<bean id="myInterceptor" class="com.zhuguang.jack.interceptor.MyInterceptor"></bean>
-
-	<bean id="anno" class="com.zhuguang.jack.annotationaop.MyInterceptor"></bean>-->
-
-
-<!--	<bean id="oracle" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-		<property name="driverClass">
-			<value>${jdbc.driverClassName}</value>
-		</property>
-		<property name="jdbcUrl">
-			<value>${jdbc.url}</value>
-		</property>
-		<property name="user">
-			<value>${jdbc.username}</value>
-		</property>
-		<property name="password">
-			<value>${jdbc.password}</value>
-		</property>
-		<property name="minPoolSize" value="10" />
-		<property name="maxPoolSize" value="100" />
-		<property name="maxIdleTime" value="1800" />
-		<property name="acquireIncrement" value="3" />
-		<property name="maxStatements" value="1000" />
-		<property name="initialPoolSize" value="10" />
-		<property name="idleConnectionTestPeriod" value="60" />
-		<property name="acquireRetryAttempts" value="30" />
-		<property name="breakAfterAcquireFailure" value="false" />
-		<property name="testConnectionOnCheckout" value="false" />
-		<property name="acquireRetryDelay">
-			<value>100</value>
-		</property>
-	</bean>-->
-	<!--
-		<bean id="oracle" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
-			<property name="driverClassName"     value="${ora_driver}"/>
-			<property name="url"         value="${ora_url}"/>
-			<property name="username"    value="${ora_username}"/>
-			<property name="password"    value="${ora_password}"/>
-		</bean>
-
-	<bean id="vendorProperties"
-		  class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-		<property name="properties">
-			<props>
-				<prop key="Oracle">oracle</prop>
-				<prop key="MySQL">mysql</prop>
-			</props>
-		</property>
-	</bean>-->
-
-	<!-- mybatis多产商数据库支持
-	<bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider">
-		<property name="properties" ref="vendorProperties" />
-	</bean>-->
-
-	<!--<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
-			<tx:attributes>
-				<tx:method name="save*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="delete*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="update*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="check*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="print*" propagation="REQUIRED" read-only="false"
-					rollback-for="java.lang.RuntimeException" />
-				<tx:method name="*" propagation="REQUIRED" read-only="false" isolation="READ_COMMITTED"
-					rollback-for="java.lang.RuntimeException" />
-			</tx:attributes>
-		</tx:advice>
-		<aop:config>
-			<aop:pointcut id="pc"
-				expression="execution(public * com.zhuguang.jack.service..*.*(..))" />
-			<aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice" />
-		</aop:config>-->
-	<!--<aop:aspectj-autoproxy/>-->
-	<!--
-<aop:pointcut>：用来定义切入点，该切入点可以重用；
-				 <aop:advisor>：用来定义只有一个通知和一个切入点的切面；
-				 <aop:aspect>：用来定义切面，该切面可以包含多个切入点和通知，而且标签内部的通知和切入点定义是无序的；和advisor的区别就在此，advisor只包含一个通知和一个切入点。
-				 <aop:before method="before" pointcut-ref="myMethods"/>
-<aop:after-returning method="afterReturning" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
-<aop:after method="after" pointcut-ref="myMethod2"/>
-<aop:after-throwing method="afterthrowing" pointcut-ref="myMethods"/>
-<aop:around method="around" pointcut-ref="myMethod2"/>
-
-			<aop:config proxy-target-class="true">
-				<aop:pointcut >在此处定义的pointcut是全局的pointcut可以供所有的aspect使用
-					 id:表示这个pointcut的名称，以方便使用
-				<aop:pointcut id="myMethods"
-					expression="execution(public * com.zhuguang.jack.service..*.*(..))" />
-				<aop:aspect id="txAspect" ref="myaspectj">
-
-					<aop:declare-parents types-matching="com.zhuguang.jack.service.MyServiceImpl"
-						implement-interface="com.zhuguang.jack.aop.IntroductionIntf"
-						delegate-ref="myintroduction"/>
-						 id:表示这个pointcut的名称，以方便使用
-					<aop:pointcut id="myMethod2"
-						expression="execution(public * com.zhuguang.jack.service..*.*(..))" />
-					<aop:before method="before" pointcut-ref="myMethods"/>
-				</aop:aspect>
-			</aop:config>
-		<aop:aspectj-autoproxy proxy-target-class="true"/>-->
-	<!--<aop:aspectj-autoproxy/>-->
 </beans>
 	
 	

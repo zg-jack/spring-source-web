@@ -74,8 +74,37 @@
     </init-param>
     <load-on-startup>0</load-on-startup>
   </servlet>
-  <servlet-mapping>
+    <servlet-mapping>
     <servlet-name>spring-dispatcher</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
+
+  <servlet>
+    <servlet-name>MyServlet</servlet-name>
+    <servlet-class>com.zhuguang.jack.servlet.MyServlet</servlet-class>
+    <load-on-startup>0</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MyServlet</servlet-name>
+    <url-pattern>/my</url-pattern>
+  </servlet-mapping>
+
+  <!--静态文件处理-->
+  <!--<servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.css</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.gif</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.jpg</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.js</url-pattern>
+  </servlet-mapping>-->
+
 </web-app>

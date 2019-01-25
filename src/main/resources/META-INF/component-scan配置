@@ -1,0 +1,20 @@
+<context:component-scan base-package="com.zhuguang.jack" <!-- 扫描的基本包路径 -->
+    annotation-config="true" <!-- 是否激活属性注入注解 -->
+    name-generator="org.springframework.context.annotation.AnnotationBeanNameGenerator"  <!-- Bean的ID策略生成器 -->
+    resource-pattern="**/*.class" <!-- 对资源进行筛选的正则表达式，这边是个大的范畴，具体细分在include-filter与exclude-filter中进行 -->
+    scope-resolver="org.springframework.context.annotation.AnnotationScopeMetadataResolver" <!-- scope解析器 ，与scoped-proxy只能同时配置一个 -->
+    scoped-proxy="no" <!-- scope代理，与scope-resolver只能同时配置一个 -->
+    use-default-filters="false" <!-- 是否使用默认的过滤器，默认值true -->
+    >
+    <!-- 注意：若使用include-filter去定制扫描内容，要在use-default-filters="false"的情况下，不然会“失效”，被默认的过滤机制所覆盖 -->
+    <!-- annotation是对注解进行扫描 -->
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Component"/>
+    <!-- assignable是对类或接口进行扫描 -->
+    <context:include-filter type="assignable" expression="com.wjx.betalot.performer.Performer"/>
+    <context:include-filter type="assignable" expression="com.wjx.betalot.performer.impl.Sonnet"/>
+    <context:exclude-filter type="regex" expression=".controller.*"/>
+    <!-- 注意：在use-default-filters="false"的情况下，exclude-filter是针对include-filter里的内容进行排除 -->
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    <context:exclude-filter type="assignable" expression="com.wjx.betalot.performer.impl.RainPoem"/>
+    <context:exclude-filter type="regex" expression=".service.*"/>
+</context:component-scan>

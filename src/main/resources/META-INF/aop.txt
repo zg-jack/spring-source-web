@@ -1,5 +1,6 @@
 AspectJAwareAdvisorAutoProxyCreator
 AnnotationAwareAspectJAutoProxyCreator
+InfrastructureAdvisorAutoProxyCreator
 
 MethodLocatingFactoryBean
 SimpleBeanFactoryAwareAspectInstanceFactory
@@ -36,7 +37,10 @@ before：this.advice.before(),invocation.processd();
 
 
 事务属性类
-NameMatchTransactionAttributeSource
+NameMatchTransactionAttributeSource  nameMap
+
+AnnotationTransactionAttributeSource
+    SpringTransactionAnnotationParser
 
 
 
@@ -129,3 +133,33 @@ spring隔离级别
 那么，以后就会发生操作第一个事务的用户发现表中还有没有修改的数据行，就好象发生了幻觉一样。
 
 docker run -ti -d -p 3307:3306 -v /home/mysqlconfig/mysql/my.cnf:/etc/mysql/mysql.conf.d/mysqld.cnf -v /home/mysqlconfig/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql mysql:5.6
+
+
+saveTest
+
+begin transation = TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);
+try {
+    try {
+    #retVal = invocation.proceedWithInvocation();
+    String sql = "insert into test(num) values (?)";
+    int count = jdbcTemplate.update(sql, new Object[]{param});
+    #myService.saveTest1(param);
+
+    begin transation
+    try {
+        String sql = "insert into test1(num) values (?)";
+        int count = jdbcTemplate.update(sql, new Object[]{param});
+        throw new RuntimeException("saveTest1 异常");
+    } catch() {
+          completeTransactionAfterThrowing(txInfo, ex);
+          throw ex;
+    }
+    commit transation = commitTransactionAfterReturning(txInfo);
+    }catch() {
+
+    }
+} catch() {
+    completeTransactionAfterThrowing(txInfo, ex);
+    throw ex;
+}
+commit transation = commitTransactionAfterReturning(txInfo);

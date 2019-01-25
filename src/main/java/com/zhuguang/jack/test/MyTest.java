@@ -1,5 +1,6 @@
 package com.zhuguang.jack.test;
 
+import com.zhuguang.jack.annotation.MyAnnotationInstance;
 import com.zhuguang.jack.bean.ConsultConfigArea;
 import com.zhuguang.jack.dao.CommonMapper;
 import com.zhuguang.jack.service.MyService;
@@ -47,6 +48,9 @@ public class MyTest {
     @Autowired
     CommonMapper commonMapper;
 
+    @Autowired
+    MyAnnotationInstance myAnnotationInstance;
+
     @Test
     public void test2() {
         System.out.println(commonMapper.queryContent(new HashMap()));
@@ -61,4 +65,22 @@ public class MyTest {
         myService1.saveArea(area);
     }
 
+    @Test
+    public void test4() {
+        try {
+            myService.saveTest("Jack22");
+        } finally {
+            myService.queryAllTest();
+        }
+    }
+
+    @Test
+    public void test5() {
+        myService.queryAllTest();
+    }
+
+    @Test
+    public void test6() {
+        System.out.println("==========test6===========" + myAnnotationInstance.getName());
+    }
 }
