@@ -11,8 +11,18 @@ import javax.servlet.http.HttpServletResponse;
 public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
+
+        if(request.getRequestURI().contains(".jpg")) {
+            return true;
+        }
+
+        if(request.getRequestURI().contains("file")) {
+            return true;
+        }
+
         if("jack".equals(username) && "123".equals(password)) {
             System.out.println("================AuthInterceptor权限校验成功================");
             return true;

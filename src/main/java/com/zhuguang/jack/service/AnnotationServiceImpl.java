@@ -3,6 +3,7 @@ package com.zhuguang.jack.service;
 import com.zhuguang.jack.annotation.TargetMethod;
 import com.zhuguang.jack.bean.ConsultConfigArea;
 import com.zhuguang.jack.bean.ConsultContent;
+import com.zhuguang.jack.bean.User;
 import com.zhuguang.jack.dao.CommonMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -72,5 +73,10 @@ public class AnnotationServiceImpl implements MyService {
     @Override
     public void queryAllTest() {
 
+    }
+
+    @Override
+    public User queryUser(User user) {
+        return null;
     }
 }

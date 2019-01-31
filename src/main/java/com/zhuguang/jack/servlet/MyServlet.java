@@ -14,6 +14,8 @@ public class MyServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        response.getWriter();
+
         System.out.println("=================doget=========myServlet");
         RequestDispatcher requestDispatcher = request.getRequestDispatcher("/WEB-INF/jsp/ok.jsp");
         requestDispatcher.forward(request,response);

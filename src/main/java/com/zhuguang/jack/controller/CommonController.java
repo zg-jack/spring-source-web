@@ -4,11 +4,13 @@ import com.zhuguang.jack.bean.ConsultContent;
 import com.zhuguang.jack.bean.User;
 import com.zhuguang.jack.exception.PasswordCheckException;
 import com.zhuguang.jack.scope.ScopeTest;
+import com.zhuguang.jack.service.CacheServiceImpl;
 import com.zhuguang.jack.service.MyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -32,11 +34,25 @@ public class CommonController {
     @Qualifier("annotationServiceImpl")
     MyService myService;
 
+    /*
+    content-type
+    * username=jack&password=123&name=roy
+    * json
+    * {}
+    *
+    * /common/index
+    * /common/index*
+    * /commom/queryContent
+    * /commom/queryContent*
+    * /common/sayHello
+    * /common/responseStatus
+    *
+    * */
     @RequestMapping("/index")
     public @ResponseBody
     String index() {
         System.out.println(scopeTest.getUsername());
-        return "ok" + scopeTest.getUsername();
+        return "ok";
     }
 
     @RequestMapping("/queryContent")
@@ -79,6 +95,7 @@ public class CommonController {
         User user = new User();
         user.setPassword("123");
         user.setUsername("Jack");
+        user.setUid(123098823);
         return user;
     }
 
@@ -89,5 +106,23 @@ public class CommonController {
         }
         System.out.println("============密码校验正确");
         return "ok";
+    }
+
+    @Autowired
+    @Qualifier("cacheServiceImpl")
+    MyService cacheService;
+
+    @RequestMapping("/cache")
+    public @ResponseBody String cacheTest(@RequestParam String param) {
+        String result = cacheService.doSomething(param);
+        System.out.println("=================result : " + result);
+        return result;
+    }
+
+    @RequestMapping("/queryUser")
+    public @ResponseBody String queryUser(@ModelAttribute("user2") User user) {
+        User result = cacheService.queryUser(user);
+        System.out.println("=================result : " + result);
+        return "============ok==========";
     }
 }

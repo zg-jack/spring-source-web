@@ -18,7 +18,7 @@ public class MyController {
 
 使用 @RequestParam 绑定 HttpServletRequest 请求参数到控制器方法参数
 @RequestMapping ( "requestParam" )
-   public String testRequestParam( @RequestParam(required=false) String name, @RequestParam ( "age" ) int age) {
+   public String testRequestParam( @RequestParam(required=false) String name, @RequestParam ( "agxxe" ) int age) {
        return "requestParam" ;
 }
 在上面代码中利用@RequestParam 从HttpServletRequest 中绑定了参数name 到控制器方法参数name ，
@@ -93,3 +93,7 @@ SpringMVC 支持使用 @ModelAttribute 和 @SessionAttributes 在不同的模型
 属性名称可以使用 @ModelAttribute(“attributeName”) 在标记方法的时候指定，若未指定，则使用返回类型的类名称（首字母小写）作为属性名称。
 关于 @ModelAttribute 标记在方法上时对应的属性是存放在 session 中还是存放在模型中，我们来做一个实验，看下面一段代码。
 
+
+handlerMap
+/commom/index CommonController@121343
+/commom/index* CommonController@121343

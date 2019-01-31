@@ -2,6 +2,7 @@ package com.zhuguang.jack.service;
 
 import com.zhuguang.jack.bean.ConsultConfigArea;
 import com.zhuguang.jack.bean.ConsultContent;
+import com.zhuguang.jack.bean.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -85,5 +86,10 @@ public class MyServiceImpl implements MyService {
                 return null;
             }
         });
+    }
+
+    @Override
+    public User queryUser(User user) {
+        return null;
     }
 }

@@ -2,6 +2,7 @@ package com.zhuguang.jack.service;
 
 import com.zhuguang.jack.bean.ConsultConfigArea;
 import com.zhuguang.jack.bean.ConsultContent;
+import com.zhuguang.jack.bean.User;
 
 import java.util.List;
 import java.util.Map;
@@ -20,4 +21,6 @@ public interface MyService {
     public void saveTest1(String param);
 
     public void queryAllTest();
+
+    public User queryUser(User user);
 }

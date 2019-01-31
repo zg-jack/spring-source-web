@@ -7,7 +7,7 @@ import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Service;
 
 @Service
-@Aspect
+//@Aspect
 public class AspectAnnotation {
 
     @Pointcut("execution(public * com.zhuguang.jack.service.*.*(..))")

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <title>show all users</title>
+</head>
+<body>
+<h2>单个名字:$user</h2>
+<hr/>
+    <table >遍历集合所得到的数据
+            #foreach($user in $users)
+                    <tr >
+                            <td >$user.uid</td>
+                            <td >$user.username</td>
+                            <td >$user.password</td>
+                        </tr>
+                #end
+        </table>
+    <hr/>
+    #set($directoryRoot = "www" )
+    #set($templateName = "index.vm" )
+    #set($template = "$directoryRoot/$templateName" )
+    最终结果:$template
+</body>
+</html>  

@@ -1,14 +1,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	   xmlns:context="http://www.springframework.org/schema/context"
-	   xmlns:task="http://www.springframework.org/schema/task"
-	   xmlns:aop="http://www.springframework.org/schema/aop"
-	   xmlns:util="http://www.springframework.org/schema/util"
-	   xmlns:mvc="http://www.springframework.org/schema/mvc"
-	   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-	   xmlns:tx="http://www.springframework.org/schema/tx"
-	   xmlns:jpa="http://www.springframework.org/schema/data/jpa"
-	   xsi:schemaLocation="
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:cache="http://www.springframework.org/schema/cache"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="
 	http://www.springframework.org/schema/util
 	http://www.springframework.org/schema/util/spring-util-3.2.xsd
 	http://www.springframework.org/schema/beans
@@ -16,7 +17,7 @@
 	http://www.springframework.org/schema/context
 	http://www.springframework.org/schema/context/spring-context-3.2.xsd
 	http://www.springframework.org/schema/mvc
-	http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+	http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
 	http://www.springframework.org/schema/aop
 	http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
 	http://www.springframework.org/schema/jdbc
@@ -25,105 +26,179 @@
 	http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
 	http://www.springframework.org/schema/data/jpa
 	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+	http://www.springframework.org/schema/cache
+    http://www.springframework.org/schema/cache/spring-cache-4.2.xsd
 	http://www.springframework.org/schema/task
 	http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
-	<!--<import resource="spring-dispatcher.xml"></import>-->
-	<!-- 加载数据库配置文件
-		<bean
-			class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-			<property name="ignoreUnresolvablePlaceholders" value="true" />
-			<property name="locations">
-				<list>
-					<value>classpath:config.properties</value>
-				</list>
-			</property>
-		</bean>  -->
-	<context:component-scan base-package="com.zhuguang.jack" use-default-filters="false">
-		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-		<!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Component"/>-->
-		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
-	</context:component-scan>
+    <!--<import resource="spring-dispatcher.xml"></import>-->
+    <!-- 加载数据库配置文件
+        <bean
+            class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+            <property name="ignoreUnresolvablePlaceholders" value="true" />
+            <property name="locations">
+                <list>
+                    <value>classpath:config.properties</value>
+                </list>
+            </property>
+        </bean>  -->
+    <context:component-scan base-package="com.zhuguang.jack" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+        <!--<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Component"/>-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
 
-	<context:property-placeholder location="classpath:config/core/core.properties" />
+    <context:property-placeholder location="classpath:config/core/core.properties"/>
+    <!--默认的HandlerMapping和HandlerAdapter配置形式-->
+    <!-- 解决springMVC响应数据乱码   text/plain就是响应的时候原样返回数据
+        <mvc:annotation-driven>
+            <mvc:message-converters register-defaults="true">
+                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                    <property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+                </bean>
+            </mvc:message-converters>
+        </mvc:annotation-driven>-->
+    <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+                <value>text/json;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
 
-	<!-- 解决springMVC响应数据乱码   text/plain就是响应的时候原样返回数据
-		<mvc:annotation-driven>
-			<mvc:message-converters register-defaults="true">
-				<bean class="org.springframework.http.converter.StringHttpMessageConverter">
-					<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
-				</bean>
-			</mvc:message-converters>
-		</mvc:annotation-driven>-->
-	<!--<bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
-			<property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
-		</bean>-->
-	<!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
-	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
-		<property name="supportedMediaTypes">
-			<list>
-				<value>text/html;charset=UTF-8</value>
-			</list>
-		</property>
-	</bean>
-	<!--静态资源，location webapp根目录下的路径-->
-	<mvc:resources mapping="/css/**" location="/WEB-INF/css/"/>
-	<mvc:resources mapping="/images/**" location="/WEB-INF/img/"/>
-	<mvc:resources mapping="/js/**" location="/WEB-INF/js/"/>
+    <bean id="formHttpMessageConverter" class="org.springframework.http.converter.FormHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/x-www-form-urlencoded</value>
+                <value>multipart/form-data</value>
+            </list>
+        </property>
+    </bean>
+    <!--默认处理所有未设置ContentType的请求-->
+    <bean id="stringHttpMessageConverter" class="org.springframework.http.converter.StringHttpMessageConverter">
 
-	<bean id="userInterceptor" class="com.zhuguang.jack.handlerInterceptor.UserInterceptor"></bean>
-	<mvc:interceptors>
-		<!--
-		   /**的意思是所有文件夹及里面的子文件夹
-		   /*是所有文件夹，不含子文件夹
-		   /是web项目的根目录
-		 -->
-		<mvc:interceptor>
-			<mvc:mapping path="/user/*" />
-			<!-- 需排除拦截的地址 -->
-			<!-- <mvc:exclude-mapping path="/userController/login"/>  -->
-			<ref bean="userInterceptor"/>
-		</mvc:interceptor>
-		<!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法  -->
-	</mvc:interceptors>
-	<!-- 配置视图解析 -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/jsp/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
+    </bean>
+    <!--默认处理application/octet-stream类型请求。-->
+    <bean id="byteArrayHttpMessageConverter" class="org.springframework.http.converter.ByteArrayHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/octet-stream</value>
+            </list>
+        </property>
+    </bean>
+    <!--静态资源，location webapp根目录下的路径-->
+    <!--<mvc:resources mapping="/css/**" location="/WEB-INF/css/"/>-->
+    <!--<mvc:resources mapping="/images/**" location="/WEB-INF/img/"/>-->
+    <!--<mvc:resources mapping="/js/**" location="/WEB-INF/js/"/>-->
+    <!--静态资源处理，需要配置web容器默认的静态资源处理servlet-->
+    <!--<mvc:default-servlet-handler default-servlet-name="default"/>-->
 
-	<!--<mvc:view-controller path="/" view-name="redirect:/index" />-->
+    <!--<bean id="userInterceptor" class="com.zhuguang.jack.handlerInterceptor.UserInterceptor"></bean>-->
+    <mvc:interceptors>
+        <!--
+           /**的意思是所有文件夹及里面的子文件夹
+           /*是所有文件夹，不含子文件夹
+           /是web项目的根目录
+         -->
+        <mvc:interceptor>
+            <mvc:mapping path="/user/*"/>
+            <!-- 需排除拦截的地址 -->
+            <!-- <mvc:exclude-mapping path="/userController/login"/>  -->
+            <!--<ref bean="userInterceptor"/>-->
+            <bean id="userInterceptor" class="com.zhuguang.jack.handlerInterceptor.UserInterceptor"></bean>
+        </mvc:interceptor>
+        <!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法  -->
+    </mvc:interceptors>
+    <!-- 配置视图解析 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
 
-	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
-		<property name="interceptors">
-			<list>
-				<bean class="com.zhuguang.jack.handlerInterceptor.AuthInterceptor"></bean>
-			</list>
-		</property>
-	</bean>
+    <bean class="com.zhuguang.jack.controller.NameController" id="nameController"/>
 
-	<bean id="handlerAdapter"
-		  class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
-		<property name="messageConverters">
-			<list>
-				<ref bean="mappingJacksonHttpMessageConverter" /><!-- json转换器 -->
-				<!--<ref bean="stringHttpMessageConverter"/>-->
-			</list>
-		</property>
-	</bean>
 
-	<!-- 支持上传文件 -->
-	<!-- 控制器异常处理 -->
-	<bean id="exceptionResolver"
-		  class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
-		<property name="exceptionMappings">
-			<props>
-				<prop key="java.lang.Exception">
-					error
-				</prop>
-			</props>
-		</property>
-	</bean>
+    <!--<mvc:annotation-driven/>-->
+
+    <!--<mvc:view-controller path="/view/ok" view-name="ok"/>-->
+    <!--<mvc:view-controller path="/view/fileUpload" view-name="fileUpload"/>-->
+
+    <!--重定向标签-->
+    <!--<mvc:status-controller path="/status" status-code="200"/>-->
+    <!--<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">-->
+        <!--<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">-->
+        <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <!--<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">-->
+        <!--<property name="interceptors">
+            <list>
+                <bean class="com.zhuguang.jack.handlerInterceptor.AuthInterceptor"></bean>
+            </list>
+        </property>-->
+        <!--<property name="urlMap">
+            <map>
+                <entry key="/name/jack" value-ref="nameController"></entry>
+            </map>
+        </property>-->
+    </bean>
+
+    <!--<bean id="handlerAdapter"
+          class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        &lt;!&ndash;
+        1、请求中的ContentType和Accept对应的Converter
+        2、如果1无法找到对应Converter，则通过遍历MessageConverters的canRead/canWrite选择最有可能的Converter
+        3、如果2无法找到对应Converter，则返回错误。
+
+        常见媒体类型使用场景
+        application/x-www-form-urlencoded
+        userName=admin&password=b59c67bf196a4758191e42f76670ceba
+        multipart/form-data
+        application/json
+        &ndash;&gt;
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter"/>&lt;!&ndash; json转换器 &ndash;&gt;
+                <ref bean="formHttpMessageConverter"/>
+                <ref bean="stringHttpMessageConverter"/>
+                <ref bean="byteArrayHttpMessageConverter"/>
+            </list>
+        </property>
+    </bean>-->
+
+    <!-- 控制器异常处理 -->
+    <bean id="exceptionResolver"
+          class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+        <property name="exceptionMappings">
+            <props>
+                <prop key="java.lang.Exception">
+                    error
+                </prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 支持上传文件 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="UTF-8"/>
+        <property name="maxUploadSize" value="5400000"/>
+        <property name="uploadTempDir" value="fileUpload/temp"/>
+    </bean>
+
+    <!--跨域请求配置-->
+    <mvc:cors>
+        <mvc:mapping path="/**"
+                     allowed-origins="*"
+                     allowed-methods="POST, GET, OPTIONS, DELETE, PUT"
+                     allowed-headers="Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"
+                     allow-credentials="true"/>
+    </mvc:cors>
+
+    <import resource="spring-freemarker.xml"/>
+    <!--<import resource="spring-velocity.xml"/>-->
+    <import resource="spring-redis.xml"/>
+    <!--<import resource="spring-cache.xml"/>-->
 </beans>
 	
 	

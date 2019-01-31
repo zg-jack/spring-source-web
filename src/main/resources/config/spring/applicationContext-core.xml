@@ -329,4 +329,6 @@ abstract="true" Spring不会实例化该bean
             </bean>
         </property>
     </bean>-->
+    <import resource="spring-cache.xml"/>
+    <import resource="spring-mongodb.xml"/>
 </beans>
