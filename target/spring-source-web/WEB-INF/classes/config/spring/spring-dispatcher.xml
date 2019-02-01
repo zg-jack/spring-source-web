@@ -50,17 +50,26 @@
 
     <context:property-placeholder location="classpath:config/core/core.properties"/>
     <!--默认的HandlerMapping和HandlerAdapter配置形式-->
-    <!-- 解决springMVC响应数据乱码   text/plain就是响应的时候原样返回数据
-        <mvc:annotation-driven>
-            <mvc:message-converters register-defaults="true">
-                <bean class="org.springframework.http.converter.StringHttpMessageConverter">
-                    <property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
-                </bean>
-            </mvc:message-converters>
-        </mvc:annotation-driven>-->
+    <!-- 解决springMVC响应数据乱码   text/plain就是响应的时候原样返回数据-->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes" value = "text/plain;charset=UTF-8" />
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
     <!-- 避免IE执行AJAX时,返回JSON出现下载文件 -->
     <bean id="mappingJacksonHttpMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+                <value>text/json;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="fastJsonHttpMessageConverter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
         <property name="supportedMediaTypes">
             <list>
                 <value>application/json;charset=UTF-8</value>
@@ -110,6 +119,10 @@
             <!--<ref bean="userInterceptor"/>-->
             <bean id="userInterceptor" class="com.zhuguang.jack.handlerInterceptor.UserInterceptor"></bean>
         </mvc:interceptor>
+        <!--<mvc:interceptor>
+            <mvc:mapping path="/common/*"/>
+            <bean class="com.zhuguang.jack.handlerInterceptor.AuthInterceptor"></bean>
+        </mvc:interceptor>-->
         <!-- 当设置多个拦截器时，先按顺序调用preHandle方法，然后逆序调用每个拦截器的postHandle和afterCompletion方法  -->
     </mvc:interceptors>
     <!-- 配置视图解析 -->
@@ -120,17 +133,20 @@
 
     <bean class="com.zhuguang.jack.controller.NameController" id="nameController"/>
 
+    <bean class="com.zhuguang.jack.controller.BeanNameUrlController" id="/bean/name" name="/bean/name1,/bean/name2"/>
+
 
     <!--<mvc:annotation-driven/>-->
 
-    <!--<mvc:view-controller path="/view/ok" view-name="ok"/>-->
-    <!--<mvc:view-controller path="/view/fileUpload" view-name="fileUpload"/>-->
+    <mvc:view-controller path="/view/ok" view-name="ok"/>
+    <mvc:view-controller path="/view/fileUpload" view-name="fileUpload"/>
 
     <!--重定向标签-->
     <!--<mvc:status-controller path="/status" status-code="200"/>-->
+    <!--只能通过ioc的方式建立url和controller之间的映射-->
     <!--<bean class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">-->
         <!--<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping">-->
-        <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <!--<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">-->
         <!--<bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping">-->
         <!--<property name="interceptors">
             <list>
@@ -142,9 +158,9 @@
                 <entry key="/name/jack" value-ref="nameController"></entry>
             </map>
         </property>-->
-    </bean>
+    <!--</bean>-->
 
-    <!--<bean id="handlerAdapter"
+<!--    <bean id="handlerAdapter"
           class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
         &lt;!&ndash;
         1、请求中的ContentType和Accept对应的Converter
@@ -159,10 +175,11 @@
         &ndash;&gt;
         <property name="messageConverters">
             <list>
-                <ref bean="mappingJacksonHttpMessageConverter"/>&lt;!&ndash; json转换器 &ndash;&gt;
+                &lt;!&ndash;<ref bean="mappingJacksonHttpMessageConverter"/>&lt;!&ndash; json转换器 &ndash;&gt;&ndash;&gt;
                 <ref bean="formHttpMessageConverter"/>
                 <ref bean="stringHttpMessageConverter"/>
                 <ref bean="byteArrayHttpMessageConverter"/>
+                <ref bean="fastJsonHttpMessageConverter"/>
             </list>
         </property>
     </bean>-->
@@ -198,7 +215,6 @@
     <import resource="spring-freemarker.xml"/>
     <!--<import resource="spring-velocity.xml"/>-->
     <import resource="spring-redis.xml"/>
-    <!--<import resource="spring-cache.xml"/>-->
 </beans>
 	
 	

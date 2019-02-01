@@ -17,11 +17,11 @@
 
     <description>Spring公共配置</description>
 
-    <!--<bean id="propertyConfigurer"  class="com.zhuguang.jack.springconfig.LoadProperties">
+    <bean id="propertyConfigurer"  class="com.zhuguang.jack.springconfig.LoadProperties">
         <property name="locations">
-            <value>classpath*:config/core/config.properties</value>
+            <value>classpath*:config/core/core.properties</value>
         </property>
-    </bean>-->
+    </bean>
     <bean id="propertyConfigurerForProject" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="order" value="1" />
         <property name="ignoreUnresolvablePlaceholders" value="true" />
@@ -213,25 +213,6 @@ abstract="true" Spring不会实例化该bean
         <property name="prototypeTestA" ref="prototypeTestA"/>
     </bean>
 
-    <!--<bean id="customEditorConfigurer" class="org.springframework.beans.factory.config.CustomEditorConfigurer">
-        <property name="propertyEditorRegistrars">
-            <list>
-                <bean class="com.zhuguang.jack.typeConverter.MyPropertyEditorRegistrar1"/>
-            </list>
-        </property>
-    </bean>-->
-
-    <!--
-                 <aop:pointcut>：用来定义切入点，该切入点可以重用；
-				 <aop:advisor>：用来定义只有一个通知和一个切入点的切面；
-				 <aop:aspect>：用来定义切面，该切面可以包含多个切入点和通知，而且标签内部的通知和切入点定义是无序的；和advisor的区别就在此，advisor只包含一个通知和一个切入点。
-				 <aop:before method="before" pointcut-ref="myMethods"/>
-    <aop:after-returning method="afterReturning" pointcut="execution(public * com.zhuguang.jack.service..*.*(..))"/>
-    <aop:after method="after" pointcut-ref="myMethod2"/>
-    <aop:after-throwing method="afterthrowing" pointcut-ref="myMethods"/>
-    <aop:around method="around" pointcut-ref="myMethod2"/>-->
-    <!--proxy-target-class="true" cglib proxy-target-class="false"或者默认省略 jdk-->
-    <!--java.sql.Connecttion-->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
         <property name="driverClass" value="${jdbc.driverClassName}"/>
         <property name="jdbcUrl" value="${jdbc.url}"/>
@@ -330,4 +311,5 @@ abstract="true" Spring不会实例化该bean
         </property>
     </bean>-->
     <import resource="spring-cache.xml"/>
+    <import resource="spring-mongodb.xml"/>
 </beans>

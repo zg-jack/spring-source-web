@@ -52,6 +52,7 @@ public class CommonController {
     public @ResponseBody
     String index() {
         System.out.println(scopeTest.getUsername());
+        if(true) throw new RuntimeException("=======xxx");
         return "ok";
     }
 
@@ -95,7 +96,7 @@ public class CommonController {
         User user = new User();
         user.setPassword("123");
         user.setUsername("Jack");
-        user.setUid(123098823);
+        user.setUid(114890);
         return user;
     }
 

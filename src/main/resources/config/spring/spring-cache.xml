@@ -2,12 +2,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
        xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:cache="http://www.springframework.org/schema/cache"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                         http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
                         http://www.springframework.org/schema/context
                         http://www.springframework.org/schema/context/spring-context-4.2.xsd
+                        http://www.springframework.org/schema/data/mongo
+                        http://www.springframework.org/schema/data/mongo/spring-mongo-1.7.xsd
                         http://www.springframework.org/schema/mvc
                         http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
                         http://www.springframework.org/schema/cache
@@ -17,8 +20,11 @@
     <bean id="propertyConfigurerForCache" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="order" value="6" />
         <property name="ignoreUnresolvablePlaceholders" value="true" />
-        <property name="location">
-            <value>classpath:config/redis/redis.properties</value>
+        <property name="locations">
+            <list>
+                <value>classpath:config/redis/redis.properties</value>
+                <value>classpath:config/mongodb/mongodb.properties</value>
+            </list>
         </property>
     </bean>
 
@@ -41,17 +47,36 @@
         <property name="connectionFactory" ref="jedisConnectionFactory" />
     </bean>
 
+    <!--credentials的配置形式是：用户名:密码@默认数据库-->
+    <mongo:mongo-client id="mongoClient" host="${mongo.host}" port="${mongo.port}">
+        <mongo:client-options write-concern="SAFE"
+                              connections-per-host="${mongo.connectionsPerHost}"
+                              threads-allowed-to-block-for-connection-multiplier="${mongo.threadsAllowedToBlockForConnectionMultiplier}"
+                              connect-timeout="${mongo.connectTimeout}"
+                              max-wait-time="${mongo.maxWaitTime}"
+                              socket-timeout="${mongo.socketTimeout}"/>
+    </mongo:mongo-client>
+    <mongo:db-factory id="mongoDbFactory" dbname="${mongo.dbname}" mongo-ref="mongoClient"/>
+    <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <constructor-arg name="mongoDbFactory" ref="mongoDbFactory"/>
+    </bean>
+
     <bean id="cacheManager" class="org.springframework.cache.support.SimpleCacheManager">
         <property name="caches">
             <set>
                 <!-- 这里可以配置多个redis -->
                 <bean class="com.zhuguang.jack.cache.RedisCache">
                     <property name="redisTemplate" ref="redisTemplate" />
-                    <property name="name" value="content"/>
+                    <property name="name" value="redisCache"/>
                     <!-- name对应的名称要在类或方法的注解中使用 -->
                 </bean>
                 <bean class="org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean">
                     <property name="name" value="mapCache"/>
+                </bean>
+                <bean class="com.zhuguang.jack.cache.MongodbCache">
+                    <property name="collection" value="mongo_cache"/>
+                    <property name="name" value="mongoCache"/>
+                    <property name="mongoTemplate" ref="mongoTemplate"/>
                 </bean>
             </set>
         </property>

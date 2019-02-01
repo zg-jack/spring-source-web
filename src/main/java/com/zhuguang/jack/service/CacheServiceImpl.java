@@ -49,7 +49,7 @@ public class CacheServiceImpl implements MyService {
 
     }
 
-    @Cacheable(cacheNames = "mapCache",key = "#user.uid")
+    @Cacheable(cacheNames = "mongoCache",key = "#user.uid")
     @Override
     public User queryUser(User user) {
         System.out.println("===========用户查询=========" + user.getUid());
