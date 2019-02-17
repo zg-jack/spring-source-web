@@ -82,7 +82,7 @@ public class RedisCache implements Cache {
     public void put(Object key, Object value) {
         System.out.println("-------加入缓存------");
         System.out.println("key----:"+key);
-        System.out.println("key----:"+value);
+        System.out.println("value----:"+value);
         final String keyString = key.toString();
         final Object valuef = value;
         final long liveTime = 86400;

@@ -99,9 +99,9 @@
         </property>
     </bean>
     <!--静态资源，location webapp根目录下的路径-->
-    <!--<mvc:resources mapping="/css/**" location="/WEB-INF/css/"/>-->
-    <!--<mvc:resources mapping="/images/**" location="/WEB-INF/img/"/>-->
-    <!--<mvc:resources mapping="/js/**" location="/WEB-INF/js/"/>-->
+    <mvc:resources mapping="/css/**" location="/WEB-INF/css/"/>
+    <mvc:resources mapping="/images/**" location="/WEB-INF/img/"/>
+    <mvc:resources mapping="/js/**" location="/WEB-INF/js/"/>
     <!--静态资源处理，需要配置web容器默认的静态资源处理servlet-->
     <!--<mvc:default-servlet-handler default-servlet-name="default"/>-->
 

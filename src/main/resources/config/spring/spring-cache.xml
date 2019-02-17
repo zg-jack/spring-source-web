@@ -28,6 +28,8 @@
         </property>
     </bean>
 
+
+
     <cache:annotation-driven cache-manager="cacheManager"/>
     <!-- redis连接池 -->
     <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">

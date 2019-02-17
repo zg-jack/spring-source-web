@@ -96,7 +96,7 @@ public class CommonController {
         User user = new User();
         user.setPassword("123");
         user.setUsername("Jack");
-        user.setUid(114890);
+        user.setUid(2233);
         return user;
     }
 
